@@ -71,11 +71,35 @@ public class StockService {
                 list.forEach(s -> {
                     s.setIndexCount(0);
                     s.setIndexCountRank(0);
+                    s.setStockMarket(getStockMarket(s.getCode()));
                 });
                 stockRepository.saveAll(list);
                 log.info("存储数据库成功！");
             }
         }).sheet().doRead();
+    }
+
+    private String getStockMarket(String code) {
+        if (code.startsWith("300") || code.startsWith("301")) {
+            return "创业板";
+        } else if (code.startsWith("60")) {
+            return "沪市A股";
+        } else if (code.startsWith("900")) {
+            return "沪市B股";
+        } else if (code.startsWith("000")) {
+            return "深市A股";
+        } else if (code.startsWith("002")) {
+            return "中小板";
+        } else if (code.startsWith("200")) {
+            return "深圳B股";
+        } else if (code.startsWith("688")) {
+            return "科创板";
+        } else if (code.startsWith("836")) {
+            return "新三板";
+        } else {
+            return "其他";
+        }
+
     }
 
 
