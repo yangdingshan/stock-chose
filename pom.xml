@@ -49,6 +49,11 @@
             <artifactId>orika-spring-boot-starter</artifactId>
             <version>1.26.0</version>
         </dependency>
+        <dependency>
+            <groupId>cn.hutool</groupId>
+            <artifactId>hutool-all</artifactId>
+            <version>5.8.2</version>
+        </dependency>
     </dependencies>
 
     <build>

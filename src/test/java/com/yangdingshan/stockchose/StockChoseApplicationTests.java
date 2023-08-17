@@ -23,15 +23,15 @@ class StockChoseApplicationTests {
     @Test
     void testRead() {
         stockService.simpleRead();
+        stockService.setPeRankAndRoeRank();
     }
 
     /**
      * 指数基金统计
      *
-     * @throws IOException
      */
     @Test
-    void simpleReadIndex() throws IOException {
+    void simpleReadIndex() {
         stockService.simpleReadIndex();
     }
 

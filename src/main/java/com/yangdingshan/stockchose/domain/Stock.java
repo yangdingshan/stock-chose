@@ -43,6 +43,12 @@ public class Stock {
     private Integer peRank;
 
     @Column
+    private Float pb;
+
+    @Column(name = "pb_rank")
+    private Integer pbRank;
+
+    @Column
     private Float roe;
 
     @Column(name = "roe_rank")

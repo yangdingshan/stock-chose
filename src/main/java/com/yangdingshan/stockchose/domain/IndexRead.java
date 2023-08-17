@@ -23,13 +23,13 @@ public class IndexRead {
     @ExcelProperty(value = "指数英文名称Index Name(Eng)")
     private String indexNameEng;
 
-    @ExcelProperty(value = "成分券代码Constituent Code")
+    @ExcelProperty(value = "成份券代码Constituent Code")
     private String constituentCode;
 
-    @ExcelProperty(value = "成分券名称Constituent Name")
+    @ExcelProperty(value = "成份券名称Constituent Name")
     private String constituentName;
 
-    @ExcelProperty(value = "成分券英文名称Constituent Name(Eng)")
+    @ExcelProperty(value = "成份券英文名称Constituent Name(Eng)")
     private String constituentNameEng;
 
     @ExcelProperty(value = "交易所Exchange")
