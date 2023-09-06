@@ -171,7 +171,9 @@ public class StockService {
      * @param stocks
      */
     private void setFinalRank(List<Stock> stocks) {
-        stocks.forEach(stock -> stock.setFinalRank(stock.getPeRank() + stock.getPbRank() + stock.getRoeRank() + stock.getIndexCountRank()));
+        stocks.forEach(stock -> stock.setFinalRankCount(stock.getPeRank() + stock.getRoeRank()));
+        stocks.stream().sorted(Comparator.comparing(Stock::getFinalRankCount))
+                .forEach(LambadaTools.forEachWithIndex(Stock::setFinalRank));
     }
 
     /**

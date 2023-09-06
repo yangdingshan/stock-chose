@@ -62,4 +62,6 @@ public class Stock {
 
     @Column(name = "final_rank")
     private Integer finalRank;
+
+    private Integer finalRankCount;
 }
