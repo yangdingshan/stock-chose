@@ -32,6 +32,7 @@ class StockChoseApplicationTests {
      */
     @Test
     void simpleReadIndex() {
+        System.out.println("ceshi");
         stockService.simpleReadIndex();
     }
 
