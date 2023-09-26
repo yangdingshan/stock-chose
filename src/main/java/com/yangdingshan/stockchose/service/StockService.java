@@ -45,7 +45,7 @@ public class StockService {
      *
      */
     public void simpleRead() {
-        String fileName = this.getClass().getClassLoader().getResource("stock/stock.xlsx").getPath();
+        String fileName = this.getClass().getClassLoader().getResource("stock/Table.xls").getPath();
         EasyExcel.read(fileName, StockRead.class, new ReadListener<StockRead>() {
             /**
              * 单次缓存的数据量

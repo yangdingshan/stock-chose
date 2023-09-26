@@ -20,7 +20,7 @@ public class StockRead {
     @ExcelProperty(value = "最新")
     private String price;
 
-    @ExcelProperty(value = "市盈率")
+    @ExcelProperty(value = "市盈率(动)")
     private String pe;
 
     @ExcelProperty(value = "市净率")

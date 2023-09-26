@@ -57,11 +57,21 @@ public class Stock {
     @Column(name = "index_count")
     private Integer indexCount;
 
+    /**
+     * 指数排名
+     *
+     */
     @Column(name = "index_count_rank")
     private Integer indexCountRank;
 
+    /**
+     * pe+roe排名
+     */
     @Column(name = "final_rank")
     private Integer finalRank;
 
+    /**
+     * pe+roe
+     */
     private Integer finalRankCount;
 }
