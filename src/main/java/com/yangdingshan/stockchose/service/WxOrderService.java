@@ -26,16 +26,20 @@ public class WxOrderService {
         paramMap.put("pageSize", "500");
         paramMap.put("pageNo", "1");
         paramMap.put("userTel", "首单");
-        paramMap.put("startDate", "2024-02-27");
-        paramMap.put("endDate", "2024-04-26");
+        // 西科大
+        paramMap.put("startDate", "2024-04-01");
+        paramMap.put("endDate", "2024-05-03");
+        // 万达
+        //paramMap.put("startDate", "2024-02-27");
+        //paramMap.put("endDate", "2024-04-26");
         paramMap.put("status", "ALL");
         /**
          * 西科大：2022121747130000023706
          * 万达：2024041147130015821147
          */
-        paramMap.put("shopCode", "2024041147130015821147");
+        paramMap.put("shopCode", "2022121747130000023706");
         String body = HttpRequest.post("https://gray.scwmwl.com/api/admin/booking/searchOrder")
-                .header("wmwl_session", "pc_1713268083843$wx283f4012384f371b$b35a39f0cf54a4015be8728b35fae7e6")
+                .header("wmwl_session", "pc_1714710695581$wx283f4012384f371b$a254dfbf60a976bdfe3bb7ef454bab9f")
                 .body(JSONUtil.toJsonStr(paramMap))
                 .execute().body();
         JSONArray jsonArray = JSONUtil.parseObj(body).getJSONObject("data").getJSONArray("data");
