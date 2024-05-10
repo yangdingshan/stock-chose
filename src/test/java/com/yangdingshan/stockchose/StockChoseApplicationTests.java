@@ -1,6 +1,7 @@
 package com.yangdingshan.stockchose;
 
 import com.yangdingshan.stockchose.service.StockService;
+import com.yangdingshan.stockchose.service.WxOrderService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -12,6 +13,9 @@ class StockChoseApplicationTests {
 
     @Autowired
     private StockService stockService;
+
+    @Autowired
+    private WxOrderService wxOrderService;
 
     @Test
     void contextLoads() {
@@ -35,4 +39,9 @@ class StockChoseApplicationTests {
         stockService.simpleReadIndex();
     }
 
+
+    @Test
+    void wxOrderTest() {
+        wxOrderService.getPhone();
+    }
 }
