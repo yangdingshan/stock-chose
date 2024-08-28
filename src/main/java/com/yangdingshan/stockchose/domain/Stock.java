@@ -67,11 +67,18 @@ public class Stock {
     /**
      * pe+roe排名
      */
-    @Column(name = "final_rank")
-    private Integer finalRank;
+    @Column(name = "pe_and_roe_rank")
+    private Integer peAndRoeRank;
 
     /**
      * pe+roe
      */
-    private Integer finalRankCount;
+    @Column(name = "pe_and_roe_count")
+    private Integer peAndRoeCount;
+
+    /**
+     * index+pe+roe排序
+     */
+    @Column(name = "index_pe_roe_rank")
+    private Integer indexPeRoeRank;
 }
