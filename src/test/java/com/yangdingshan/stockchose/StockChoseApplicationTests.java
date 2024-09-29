@@ -31,6 +31,14 @@ class StockChoseApplicationTests {
     }
 
     /**
+     * 重新下载指数数据
+     */
+    @Test
+    void flushIndex() {
+        stockService.flushIndex();
+    }
+
+    /**
      * 指数基金统计
      *
      */

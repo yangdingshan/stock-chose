@@ -1,10 +1,14 @@
 package com.yangdingshan.stockchose.service;
 
 import cn.hutool.core.util.StrUtil;
+import cn.hutool.http.HttpUtil;
 import com.alibaba.excel.EasyExcel;
 import com.alibaba.excel.context.AnalysisContext;
 import com.alibaba.excel.read.listener.ReadListener;
 import com.alibaba.excel.util.ListUtils;
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
 import com.yangdingshan.stockchose.domain.IndexRead;
 import com.yangdingshan.stockchose.domain.Stock;
 import com.yangdingshan.stockchose.domain.StockRead;
@@ -16,14 +20,21 @@ import org.apache.commons.compress.utils.Lists;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.io.BufferedInputStream;
 import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.math.BigDecimal;
+import java.net.MalformedURLException;
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Scanner;
 import java.util.stream.Collectors;
+import java.net.*;
 
 /**
  * @Author: yangdingshan
@@ -45,6 +56,7 @@ public class StockService {
      *
      */
     public void simpleRead() {
+        stockRepository.deleteAll();
         String fileName = this.getClass().getClassLoader().getResource("stock/Table.xls").getPath();
         EasyExcel.read(fileName, StockRead.class, new ReadListener<StockRead>() {
             /**
@@ -188,6 +200,76 @@ public class StockService {
                 .sorted(Comparator.comparing(Stock::getIndexCount).reversed().thenComparing(Stock::getPeRank))
                 .forEach(LambadaTools.forEachWithIndex(Stock::setIndexCountRank));
     }
+
+    public void flushIndex() {
+        File file = new File("src/main/resources/index");
+        File[] files = file.listFiles();
+        if (Objects.nonNull(files) && files.length > 0) {
+            for (File file1 : files) {
+                file1.delete();
+            }
+        }
+        System.out.println("index目录清理完成。。。。");
+        String tagList = HttpUtil.get("https://www.csindex.com.cn/csindex-home/index-list/tag-list");
+        JSONObject tag = JSON.parseObject(tagList);
+        JSONObject data = tag.getJSONObject("data");
+        JSONArray hotSpotList = data.getJSONArray("hotSpotList");
+        for (Object o : hotSpotList) {
+            JSONObject hotSpot = (JSONObject) o;
+            System.out.println("tagId:" + hotSpot.getString("tagId") + " tagName:" + hotSpot.getString("tagName"));
+        }
+        System.out.println("请输入查询的tag(多个用逗号分隔):");
+        Scanner scanner = new Scanner(System.in);
+        String scannerTags = scanner.nextLine();
+        String[] scannerTag = scannerTags.split(",");
+        Map<String, Object> sorter = new HashMap<>();
+        sorter.put("sortField", "null");
+        sorter.put("sortOrder", null);
+        Map<String, Object> pager = new HashMap<>();
+        pager.put("pageNum", 1);
+        pager.put("pageSize", 500);
+        Map<String, Object> indexFilter = new HashMap<>();
+        indexFilter.put("hotSpot", scannerTag);
+        Map<String, Object> param = new HashMap<>();
+        param.put("sorter", sorter);
+        param.put("pager", pager);
+        param.put("indexFilter", indexFilter);
+        String indexItem = HttpUtil.post("https://www.csindex.com.cn/csindex-home/index-list/query-index-item", JSONObject.toJSONString(param));
+        JSONObject jsonObject = JSON.parseObject(indexItem);
+        JSONArray indexData = jsonObject.getJSONArray("data");
+        for (Object o : indexData) {
+            JSONObject index = (JSONObject) o;
+            String indexCode = index.getString("indexCode");
+            String indexName = index.getString("indexName");
+            System.out.println("指数代码/名称：" + indexCode + "/" + indexName);
+            System.out.println("开始下载" + indexCode);
+            String urlString = String.format("https://csi-web-dev.oss-cn-shanghai-finance-1-pub.aliyuncs.com/static/html/csindex/public/uploads/file/autofile/cons/%scons.xls", indexCode);
+            String destinationPath = String.format("src/main/resources/index/%s.xls", indexCode);
+            downloadFile(urlString, destinationPath);
+            System.out.println("下载完成" + indexCode);
+        }
+        scanner.close();
+    }
+
+    private void downloadFile(String urlString, String destinationPath) {
+        try (BufferedInputStream in = new BufferedInputStream(new URL(urlString).openStream());
+             FileOutputStream fileOutputStream = new FileOutputStream(destinationPath)) {
+
+            byte[] dataBuffer = new byte[1024];
+            int bytesRead;
+            while ((bytesRead = in.read(dataBuffer, 0, 1024)) != -1) {
+                fileOutputStream.write(dataBuffer, 0, bytesRead);
+            }
+
+            System.out.println("File has been downloaded and saved successfully.");
+
+        } catch (MalformedURLException e) {
+            System.err.println("Invalid URL: " + e.getMessage());
+        } catch (IOException e) {
+            System.err.println("IO Error: " + e.getMessage());
+        }
+    }
+
 
     private void setIndexCount(Map<String, Stock> resultMap) {
         String index = this.getClass().getClassLoader().getResource("index").getFile();
