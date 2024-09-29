@@ -47,6 +47,17 @@ class StockChoseApplicationTests {
         stockService.simpleReadIndex();
     }
 
+    @Test
+    void allInOne() {
+        // 添加股票数据
+        stockService.simpleRead();
+        stockService.setPeRankAndRoeRank();
+        // 重新下载指数数据
+        stockService.flushIndex();
+        // 指数基金统计
+        stockService.simpleReadIndex();
+    }
+
 
     @Test
     void wxOrderTest() {
