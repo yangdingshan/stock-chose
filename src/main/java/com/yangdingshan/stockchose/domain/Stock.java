@@ -9,6 +9,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 import java.math.BigDecimal;
+import java.time.Instant;
 
 /**
  * @Author: yangdingshan
@@ -81,4 +82,10 @@ public class Stock {
      */
     @Column(name = "index_pe_roe_rank")
     private Integer indexPeRoeRank;
+
+    /**
+     * 购买时间
+     */
+    @Column(name = "buy_time")
+    private Instant buyTime;
 }

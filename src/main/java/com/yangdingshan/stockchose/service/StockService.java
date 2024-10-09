@@ -26,6 +26,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.net.MalformedURLException;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -134,6 +135,7 @@ public class StockService {
                     s.setIndexCount(0);
                     s.setIndexCountRank(0);
                     s.setStockMarket(getStockMarket(s.getCode()));
+                    s.setBuyTime(Instant.now());
                     list.add(s);
                 });
 
