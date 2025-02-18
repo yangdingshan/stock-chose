@@ -245,7 +245,7 @@ public class StockService {
             String indexName = index.getString("indexName");
             System.out.println("指数代码/名称：" + indexCode + "/" + indexName);
             System.out.println("开始下载" + indexCode);
-            String urlString = String.format("https://csi-web-dev.oss-cn-shanghai-finance-1-pub.aliyuncs.com/static/html/csindex/public/uploads/file/autofile/cons/%scons.xls", indexCode);
+            String urlString = String.format("https://oss-ch.csindex.com.cn/static/html/csindex/public/uploads/file/autofile/cons/%scons.xls", indexCode);
             String destinationPath = String.format("src/main/resources/index/%s.xls", indexCode);
             downloadFile(urlString, destinationPath);
             System.out.println("下载完成" + indexCode);
