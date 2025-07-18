@@ -8,6 +8,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * @Author: yangdingshan
@@ -31,25 +33,27 @@ public class WxOrderService {
         //setXiKeDaParam(paramMap);
         setWanDaParam(paramMap);
         String body = HttpRequest.post("https://gray.scwmwl.com/api/admin/booking/searchOrder")
-                .header("wmwl_session", "pc_1724831199571$wx283f4012384f371b$f0380393fbdd345c4485f05ad6fd714f")
+                .header("wmwl_session", "pc_1745077949080$wx283f4012384f371b$6d502193d23bf9ba637921d3c6268897")
                 .body(JSONUtil.toJsonStr(paramMap))
                 .execute().body();
         JSONArray jsonArray = JSONUtil.parseObj(body).getJSONObject("data").getJSONArray("data");
+        Set<String> set = new HashSet<>();
         for (Object o : jsonArray) {
             JSONObject jsonObject = (JSONObject) o;
-            System.out.println(jsonObject.getStr("tel").replaceAll("-", ""));
+            set.add(jsonObject.getStr("tel").replaceAll("-", ""));
         }
+        set.forEach(System.out::println);
     }
 
     private void setXiKeDaParam(HashMap<String, Object> paramMap) {
-        paramMap.put("startDate", "2024-08-28");
-        paramMap.put("endDate", "2024-11-29");
+        paramMap.put("startDate", "2025-04-18");
+        paramMap.put("endDate", "2025-06-18");
         paramMap.put("shopCode", "2022121747130000023706");
     }
 
     private void setWanDaParam(HashMap<String, Object> paramMap) {
-        paramMap.put("startDate", "2024-08-28");
-        paramMap.put("endDate", "2024-11-29");
+        paramMap.put("startDate", "2025-04-18");
+        paramMap.put("endDate", "2025-06-18");
         paramMap.put("shopCode", "2024041147130015821147");
     }
 }

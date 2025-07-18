@@ -27,7 +27,7 @@ class StockChoseApplicationTests {
     @Test
     void testRead() {
         stockService.simpleRead();
-        stockService.setPeRankAndRoeRank();
+        //stockService.setPeRankAndRoeRank();
     }
 
     /**
@@ -60,7 +60,7 @@ class StockChoseApplicationTests {
             throw new RuntimeException(e);
         }
         // 指数基金统计
-        stockService.simpleReadIndex();
+        //stockService.simpleReadIndex();
     }
 
 

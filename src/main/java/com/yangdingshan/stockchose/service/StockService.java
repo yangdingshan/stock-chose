@@ -15,7 +15,6 @@ import com.yangdingshan.stockchose.domain.StockRead;
 import com.yangdingshan.stockchose.repository.StockRepository;
 import com.yangdingshan.stockchose.util.LambadaTools;
 import lombok.extern.slf4j.Slf4j;
-import ma.glasnost.orika.MapperFacade;
 import org.apache.commons.compress.utils.Lists;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -26,6 +25,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.net.MalformedURLException;
+import java.net.URL;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -35,7 +35,6 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Scanner;
 import java.util.stream.Collectors;
-import java.net.*;
 
 /**
  * @Author: yangdingshan
@@ -49,12 +48,8 @@ public class StockService {
     @Autowired
     private StockRepository stockRepository;
 
-    @Autowired
-    private MapperFacade mapperFacade;
-
     /**
      * 加载股市所有股票
-     *
      */
     public void simpleRead() {
         stockRepository.deleteAll();
@@ -230,25 +225,31 @@ public class StockService {
         Map<String, Object> pager = new HashMap<>();
         pager.put("pageNum", 1);
         pager.put("pageSize", 500);
-        Map<String, Object> indexFilter = new HashMap<>();
-        indexFilter.put("hotSpot", scannerTag);
         Map<String, Object> param = new HashMap<>();
         param.put("sorter", sorter);
         param.put("pager", pager);
-        param.put("indexFilter", indexFilter);
+        if (scannerTag.length > 0) {
+            Map<String, Object> indexFilter = new HashMap<>();
+            indexFilter.put("hotSpot", scannerTag);
+            param.put("indexFilter", indexFilter);
+        }
         String indexItem = HttpUtil.post("https://www.csindex.com.cn/csindex-home/index-list/query-index-item", JSONObject.toJSONString(param));
         JSONObject jsonObject = JSON.parseObject(indexItem);
         JSONArray indexData = jsonObject.getJSONArray("data");
         for (Object o : indexData) {
-            JSONObject index = (JSONObject) o;
-            String indexCode = index.getString("indexCode");
-            String indexName = index.getString("indexName");
-            System.out.println("指数代码/名称：" + indexCode + "/" + indexName);
-            System.out.println("开始下载" + indexCode);
-            String urlString = String.format("https://oss-ch.csindex.com.cn/static/html/csindex/public/uploads/file/autofile/cons/%scons.xls", indexCode);
-            String destinationPath = String.format("src/main/resources/index/%s.xls", indexCode);
-            downloadFile(urlString, destinationPath);
-            System.out.println("下载完成" + indexCode);
+            try {
+                JSONObject index = (JSONObject) o;
+                String indexCode = index.getString("indexCode");
+                String indexName = index.getString("indexName");
+                System.out.println("指数代码/名称：" + indexCode + "/" + indexName);
+                System.out.println("开始下载" + indexCode);
+                String urlString = String.format("https://oss-ch.csindex.com.cn/static/html/csindex/public/uploads/file/autofile/cons/%scons.xls", indexCode);
+                String destinationPath = String.format("src/main/resources/index/%s.xls", indexCode);
+                downloadFile(urlString, destinationPath);
+                System.out.println("下载完成" + indexCode);
+            } catch (Exception e) {
+                log.error("下载失败", e);
+            }
         }
         scanner.close();
     }
