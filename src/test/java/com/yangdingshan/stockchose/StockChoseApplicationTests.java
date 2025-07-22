@@ -53,14 +53,14 @@ class StockChoseApplicationTests {
         stockService.simpleRead();
         stockService.setPeRankAndRoeRank();
         // 重新下载指数数据
-        stockService.flushIndex();
+        /*stockService.flushIndex();
         try {
             Thread.sleep(5000);
         } catch (InterruptedException e) {
             throw new RuntimeException(e);
-        }
+        }*/
         // 指数基金统计
-        //stockService.simpleReadIndex();
+        stockService.simpleReadIndex();
     }
 
 

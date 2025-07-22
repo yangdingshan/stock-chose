@@ -23,9 +23,12 @@ import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.math.BigDecimal;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -215,24 +218,34 @@ public class StockService {
             JSONObject hotSpot = (JSONObject) o;
             System.out.println("tagId:" + hotSpot.getString("tagId") + " tagName:" + hotSpot.getString("tagName"));
         }
+        Map<String, Object> param = new HashMap<>();
         System.out.println("请输入查询的tag(多个用逗号分隔):");
         Scanner scanner = new Scanner(System.in);
         String scannerTags = scanner.nextLine();
-        String[] scannerTag = scannerTags.split(",");
+        Map<String, Object> indexFilter = new HashMap<>();
+        if (StrUtil.isNotBlank(scannerTags)) {
+            indexFilter.put("hotSpot", scannerTags.split(","));
+        }
+        param.put("indexFilter", indexFilter);
+
+        System.out.println("通过指数代码、指数名称或关键字搜索:");
+        String searchInput = scanner.nextLine();
+        if (StrUtil.isNotBlank(searchInput)) {
+            try {
+                param.put("searchInput", URLEncoder.encode(searchInput, "UTF-8"));
+            } catch (UnsupportedEncodingException e) {
+                log.error("searchInput编码失败", e);
+            }
+        }
+
         Map<String, Object> sorter = new HashMap<>();
         sorter.put("sortField", "null");
         sorter.put("sortOrder", null);
         Map<String, Object> pager = new HashMap<>();
         pager.put("pageNum", 1);
         pager.put("pageSize", 500);
-        Map<String, Object> param = new HashMap<>();
         param.put("sorter", sorter);
         param.put("pager", pager);
-        if (scannerTag.length > 0) {
-            Map<String, Object> indexFilter = new HashMap<>();
-            indexFilter.put("hotSpot", scannerTag);
-            param.put("indexFilter", indexFilter);
-        }
         String indexItem = HttpUtil.post("https://www.csindex.com.cn/csindex-home/index-list/query-index-item", JSONObject.toJSONString(param));
         JSONObject jsonObject = JSON.parseObject(indexItem);
         JSONArray indexData = jsonObject.getJSONArray("data");
