@@ -31,14 +31,6 @@ class StockChoseApplicationTests {
     }
 
     /**
-     * 重新下载指数数据
-     */
-    @Test
-    void flushIndex() {
-        stockService.flushIndex();
-    }
-
-    /**
      * 指数基金统计
      *
      */
@@ -47,14 +39,23 @@ class StockChoseApplicationTests {
         stockService.simpleReadIndex();
     }
 
+    /**
+     * 重新下载指数数据
+     */
+    @Test
+    void flushIndex() {
+        stockService.flushIndex();
+    }
+
+
     @Test
     void allInOne() {
         // 1.下载最新股票数据
         stockService.downloadStockData();
         // 2.设置PE、ROE排名
         stockService.setPeRankAndRoeRank();
-        // 3.重新下载指数数据
-        stockService.flushIndex();
+        // 3.重新下载指数数据，先手动调用flushIndex，防止下载过多出错
+        // stockService.flushIndex();
         // 4.指数基金统计
         stockService.simpleReadIndex();
     }
