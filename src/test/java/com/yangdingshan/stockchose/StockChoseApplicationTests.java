@@ -21,13 +21,13 @@ class StockChoseApplicationTests {
     void contextLoads() {
     }
 
+
     /**
-     * 添加股票数据
+     * 测试下载股票数据
      */
     @Test
-    void testRead() {
-        stockService.simpleRead();
-        //stockService.setPeRankAndRoeRank();
+    void testDownloadStockData() {
+        stockService.downloadStockData();
     }
 
     /**
@@ -49,17 +49,13 @@ class StockChoseApplicationTests {
 
     @Test
     void allInOne() {
-        // 添加股票数据
-        stockService.simpleRead();
+        // 1.下载最新股票数据
+        stockService.downloadStockData();
+        // 2.设置PE、ROE排名
         stockService.setPeRankAndRoeRank();
-        // 重新下载指数数据
-        /*stockService.flushIndex();
-        try {
-            Thread.sleep(5000);
-        } catch (InterruptedException e) {
-            throw new RuntimeException(e);
-        }*/
-        // 指数基金统计
+        // 3.重新下载指数数据
+        stockService.flushIndex();
+        // 4.指数基金统计
         stockService.simpleReadIndex();
     }
 
@@ -68,4 +64,5 @@ class StockChoseApplicationTests {
     void wxOrderTest() {
         wxOrderService.getPhone();
     }
+
 }

@@ -1,5 +1,6 @@
 package com.yangdingshan.stockchose.service;
 
+import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.util.StrUtil;
 import cn.hutool.http.HttpUtil;
 import com.alibaba.excel.EasyExcel;
@@ -52,8 +53,124 @@ public class StockService {
     private StockRepository stockRepository;
 
     /**
-     * 加载股市所有股票
+     * 直接从东方财富网下载股票数据
      */
+    public void downloadStockData() {
+        try {
+            stockRepository.deleteAll();
+            log.info("开始下载股票数据...");
+
+            // 创建Excel数据列表
+            List<StockRead> stockList = new ArrayList<>();
+            int page = 1;
+            int pageSize = 100;
+            while (true) {
+                // 东方财富网API地址 - 修改pz参数获取更多数据
+                String apiUrl = "http://push2.eastmoney.com/api/qt/clist/get";
+                String params = String.format("pn=%d&pz=%d&po=1&np=1&ut=bd1d9ddb04089700cf9c27f6f7426281&fltt=2&invt=2&fid=f3&fs=m:0+t:6,m:0+t:80,m:1+t:2,m:1+t:23&fields=f12,f14,f2,f9,f23,f37", page, pageSize);
+
+                // 发送HTTP请求获取数据
+                String response = HttpUtil.get(apiUrl + "?" + params);
+                log.info("API响应长度: {}", response.length());
+
+                // 解析JSON响应
+                JSONObject jsonResponse = JSON.parseObject(response);
+                JSONObject data = jsonResponse.getJSONObject("data");
+                if (Objects.isNull(data)) {
+                    break;
+                }
+                JSONArray diff = data.getJSONArray("diff");
+                log.info("获取到股票数量: {}", diff.size());
+                if (CollUtil.isEmpty(diff)) {
+                    break;
+                }
+
+                for (int i = 0; i < diff.size(); i++) {
+                    JSONObject stock = diff.getJSONObject(i);
+
+                    // 提取股票数据
+                    String code = stock.getString("f12"); // 股票代码
+                    String name = stock.getString("f14"); // 股票名称
+                    // 判断f2、f9、f23等字段是否为数字
+                    String priceStr = stock.getString("f2");
+                    String peStr = stock.getString("f9");
+                    String pbStr = stock.getString("f23");
+                    String roeStr = stock.getString("f37");
+
+                    // 跳过非数字或为“-”的数据
+                    if (!isNumber(priceStr) || !isNumber(peStr) || !isNumber(pbStr) || !isNumber(roeStr)) {
+                        continue;
+                    }
+
+                    // 过滤无效数据
+                    if (StrUtil.isBlank(name) || name.startsWith("*ST") || name.startsWith("ST") || name.startsWith("PT") || name.startsWith("S")) {
+                        continue;
+                    }
+
+                    // 过滤价格、PE、PB、ROE为0或负数的股票
+                    if (stock.getDouble("f2") <= 0 || stock.getDouble("f9") <= 0 ||
+                            stock.getDouble("f23") <= 0 || stock.getDouble("f37") <= 0) {
+                        continue;
+                    }
+
+                    StockRead stockRead = new StockRead();
+                    stockRead.setCode(code);
+                    stockRead.setName(name);
+                    stockRead.setPrice(priceStr);
+                    stockRead.setPe(peStr);
+                    stockRead.setPb(pbStr);
+                    stockRead.setRoe(roeStr);
+
+                    stockList.add(stockRead);
+                }
+
+                log.info("有效股票数量: {}", stockList.size());
+
+                page++;
+            }
+            // 保存股票数据
+            List<Stock> list = Lists.newArrayList();
+            stockList.forEach(stockRead -> {
+                Stock s = new Stock();
+                s.setCode(stockRead.getCode());
+                s.setName(stockRead.getName());
+                s.setPrice(new BigDecimal(stockRead.getPrice()));
+                s.setPe(Float.parseFloat(stockRead.getPe()));
+                s.setPb(Float.parseFloat(stockRead.getPb()));
+                s.setRoe(Float.parseFloat(stockRead.getRoe()));
+                s.setIndexCount(0);
+                s.setIndexCountRank(0);
+                s.setStockMarket(getStockMarket(s.getCode()));
+                s.setBuyTime(Instant.now());
+                list.add(s);
+            });
+
+            stockRepository.saveAll(list);
+
+        } catch (Exception e) {
+            log.error("下载股票数据失败", e);
+            throw new RuntimeException("下载股票数据失败", e);
+        }
+    }
+
+    /**
+     * 判断字符串是否为数字（可为整数或小数）
+     */
+    private boolean isNumber(String str) {
+        if (StrUtil.isBlank(str)) return false;
+        try {
+            Double.parseDouble(str);
+            return true;
+        } catch (NumberFormatException e) {
+            return false;
+        }
+    }
+
+    /**
+     * 加载股市所有股票
+     * 已弃用，改为使用downloadStockData方法
+     */
+    @Deprecated
     public void simpleRead() {
         stockRepository.deleteAll();
         String fileName = this.getClass().getClassLoader().getResource("stock/Table.xls").getPath();
@@ -100,7 +217,7 @@ public class StockService {
                 // 剔除掉ROE和PE为负数的股票
                 if (Float.parseFloat(data.getPe()) <= 0
                         || Float.parseFloat(data.getRoe()) <= 0
-                        || Float.parseFloat(data.getPb()) <=0) {
+                        || Float.parseFloat(data.getPb()) <= 0) {
                     return;
                 }
                 cachedDataList.add(data);
@@ -339,7 +456,6 @@ public class StockService {
 
     /**
      * 设置pe和roe排名
-     *
      */
     public void setPeRankAndRoeRank() {
         List<Stock> stocks = stockRepository.findAll();
