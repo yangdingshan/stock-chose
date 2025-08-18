@@ -128,9 +128,13 @@ public class StockService {
 
                 page++;
             }
+
+            List<StockRead> distinctStockList = new ArrayList<>(stockList.stream()
+                    .collect(Collectors.toMap(StockRead::getCode, stock -> stock, (existing, replacement) -> existing))
+                    .values());
             // 保存股票数据
             List<Stock> list = Lists.newArrayList();
-            stockList.forEach(stockRead -> {
+            distinctStockList.forEach(stockRead -> {
                 Stock s = new Stock();
                 s.setCode(stockRead.getCode());
                 s.setName(stockRead.getName());
@@ -286,7 +290,7 @@ public class StockService {
 
     public void simpleReadIndex() {
         List<Stock> result = stockRepository.findAll();
-        Map<String, Stock> resultMap = result.stream().collect(Collectors.toMap(Stock::getCode, t -> t));
+        Map<String, Stock> resultMap = result.stream().collect(Collectors.toMap(Stock::getCode, t -> t, (t1, t2) -> t1));
         setIndexCount(resultMap);
         List<Stock> stocks = new ArrayList<>(resultMap.values());
         setIndexCountRank(stocks);
