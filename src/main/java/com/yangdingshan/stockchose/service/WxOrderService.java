@@ -30,8 +30,8 @@ public class WxOrderService {
          * 西科大：2022121747130000023706
          * 万达：2024041147130015821147
          */
-        //setXiKeDaParam(paramMap);
-        setWanDaParam(paramMap);
+        setXiKeDaParam(paramMap);
+        //setWanDaParam(paramMap);
         String body = HttpRequest.post("https://gray.scwmwl.com/api/admin/booking/searchOrder")
                 .header("wmwl_session", "pc_1745077949080$wx283f4012384f371b$6d502193d23bf9ba637921d3c6268897")
                 .body(JSONUtil.toJsonStr(paramMap))
@@ -46,8 +46,8 @@ public class WxOrderService {
     }
 
     private void setXiKeDaParam(HashMap<String, Object> paramMap) {
-        paramMap.put("startDate", "2025-04-18");
-        paramMap.put("endDate", "2025-06-18");
+        paramMap.put("startDate", "2025-07-01");
+        paramMap.put("endDate", "2025-09-20");
         paramMap.put("shopCode", "2022121747130000023706");
     }
 
