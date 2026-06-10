@@ -1,0 +1,9 @@
+我是一名股票投资者，帮我分析一下有色金属行业怎么样?并在该目录下生成分析报告
+
+我是一名股票投资者，请使用industry-analyst，帮我分析目前不错的行业
+
+sk-0fa3a776b49745c9ada8d83cf82f646b
+
+claude mcp add -s user MiniMax --env MINIMAX_API_KEY=sk-cp-PZpJrGcNzUv9Spm8H5RCAAWGJVhUXz1UAbXbYAxCCVcNMLz6y6GXU6_-2loTzvfz63SEtjKamFCsPBqgMtgTrgPcZZscgtHVPTTaM2eHV-HEV0PagrIrlKQ --env MINIMAX_API_HOST=https://api.minimaxi.com -- uvx minimax-coding-plan-mcp -y
+
+claude mcp add -s user MiniMax --env MINIMAX_API_KEY="sk-cp-PZpJrGcNzUv9Spm8H5RCAAWGJVhUXz1UAbXbYAxCCVcNMLz6y6GXU6_-2loTzvfz63SEtjKamFCsPBqgMtgTrgPcZZscgtHVPTTaM2eHV-HEV0PagrIrlKQ" --env MINIMAX_API_HOST=https://api.minimaxi.com -- uvx minimax-coding-plan-mcp -y

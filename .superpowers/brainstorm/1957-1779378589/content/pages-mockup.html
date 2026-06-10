@@ -1,0 +1,128 @@
+<h2>四个页面布局设计</h2>
+<p class="subtitle">清爽浅色风格，点击选中你喜欢的布局方案（可多选提意见）</p>
+
+<div class="section">
+  <h3>页面1 — 仪表盘（首页）</h3>
+  <div class="mockup">
+    <div class="mockup-header">Dashboard</div>
+    <div class="mockup-body" style="padding:16px">
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:12px;margin-bottom:16px">
+        <div style="background:#f0f5ff;border:1px solid #d6e4ff;border-radius:6px;padding:14px;text-align:center">
+          <div style="font-size:11px;color:#999">A股总数</div>
+          <div style="font-size:24px;font-weight:700;color:#1890ff">4,862</div>
+        </div>
+        <div style="background:#f6ffed;border:1px solid #b7eb8f;border-radius:6px;padding:14px;text-align:center">
+          <div style="font-size:11px;color:#999">有效标的</div>
+          <div style="font-size:24px;font-weight:700;color:#52c41a">3,201</div>
+        </div>
+        <div style="background:#fff7e6;border:1px solid #ffd591;border-radius:6px;padding:14px;text-align:center">
+          <div style="font-size:11px;color:#999">数据更新</div>
+          <div style="font-size:14px;font-weight:700;color:#fa8c16">2026-05-22</div>
+          <div style="font-size:10px;color:#ccc">东方财富源</div>
+        </div>
+        <div style="background:#f9f0ff;border:1px solid #d3adf7;border-radius:6px;padding:14px;text-align:center">
+          <div style="font-size:11px;color:#999">收录指数</div>
+          <div style="font-size:24px;font-weight:700;color:#722ed1">156个</div>
+        </div>
+      </div>
+      <div style="font-weight:600;margin-bottom:8px;color:#333;font-size:13px">📊 综合排名 TOP 20</div>
+      <table style="width:100%;font-size:11px;border-collapse:collapse">
+        <tr style="background:#fafafa;border-bottom:1px solid #f0f0f0;color:#999">
+          <td style="padding:6px 8px">#</td><td>代码</td><td>名称</td><td style="text-align:right">PE</td><td style="text-align:right">PB</td><td style="text-align:right">ROE%</td><td style="text-align:right">PE排名</td><td style="text-align:right">ROE排名</td><td style="text-align:right">指数覆盖</td><td style="text-align:right;color:#1890ff;font-weight:600">综合得分</td>
+        </tr>
+        <tr style="border-bottom:1px solid #fafafa"><td style="padding:6px 8px">1</td><td>600519</td><td>贵州茅台</td><td style="text-align:right">28.5</td><td style="text-align:right">8.2</td><td style="text-align:right">28.3</td><td style="text-align:right">1,234</td><td style="text-align:right">56</td><td style="text-align:right">23</td><td style="text-align:right;color:#1890ff;font-weight:600">1,313</td></tr>
+        <tr style="border-bottom:1px solid #fafafa"><td style="padding:6px 8px">2</td><td>000858</td><td>五粮液</td><td style="text-align:right">22.1</td><td style="text-align:right">5.8</td><td style="text-align:right">24.1</td><td style="text-align:right">856</td><td style="text-align:right">89</td><td style="text-align:right">18</td><td style="text-align:right;color:#1890ff;font-weight:600">963</td></tr>
+        <tr style="border-bottom:1px solid #fafafa"><td style="padding:6px 8px">3</td><td>601318</td><td>中国平安</td><td style="text-align:right">9.8</td><td style="text-align:right">1.1</td><td style="text-align:right">18.7</td><td style="text-align:right">234</td><td style="text-align:right">1,023</td><td style="text-align:right">31</td><td style="text-align:right;color:#1890ff;font-weight:600">1,288</td></tr>
+      </table>
+      <div style="text-align:center;margin-top:10px"><a href="#" style="color:#1890ff;font-size:11px">查看全部排名 →</a></div>
+    </div>
+  </div>
+</div>
+
+<div class="section">
+  <h3>页面2 — 全部排名</h3>
+  <div class="mockup">
+    <div class="mockup-header">Full Ranking Table</div>
+    <div class="mockup-body" style="padding:16px">
+      <div style="display:flex;gap:8px;margin-bottom:12px;align-items:center;flex-wrap:wrap">
+        <input class="mock-input" placeholder="搜索代码/名称" style="width:180px;margin:0">
+        <select style="padding:6px 10px;border:1px solid #d9d9d9;border-radius:4px;font-size:11px">
+          <option>全部市场</option><option>沪市A股</option><option>深市A股</option><option>创业板</option><option>科创板</option>
+        </select>
+        <select style="padding:6px 10px;border:1px solid #d9d9d9;border-radius:4px;font-size:11px">
+          <option>排序：综合得分</option><option>PE排名</option><option>ROE排名</option><option>指数覆盖</option>
+        </select>
+        <span style="color:#999;font-size:10px">共 3,201 条</span>
+      </div>
+      <table style="width:100%;font-size:11px;border-collapse:collapse">
+        <tr style="background:#fafafa;border-bottom:1px solid #f0f0f0;color:#999">
+          <td style="padding:6px 8px">#</td><td>代码</td><td>名称</td><td style="text-align:right">市场</td><td style="text-align:right">PE ↑↓</td><td style="text-align:right">PE排名</td><td style="text-align:right">PB</td><td style="text-align:right">ROE%</td><td style="text-align:right">指数数</td><td style="text-align:right;color:#1890ff;font-weight:600">综合</td>
+        </tr>
+        <tr style="border-bottom:1px solid #fafafa"><td style="padding:6px 8px">1</td><td>600519</td><td>贵州茅台</td><td style="text-align:right">沪市A股</td><td style="text-align:right">28.5</td><td style="text-align:right">1,234</td><td style="text-align:right">8.2</td><td style="text-align:right">28.3</td><td style="text-align:right">23</td><td style="text-align:right;color:#1890ff">1,313</td></tr>
+        <tr style="border-bottom:1px solid #fafafa;background:#fafafa"><td style="padding:6px 8px">2</td><td>000858</td><td>五粮液</td><td style="text-align:right">深市A股</td><td style="text-align:right">22.1</td><td style="text-align:right">856</td><td style="text-align:right">5.8</td><td style="text-align:right">24.1</td><td style="text-align:right">18</td><td style="text-align:right;color:#1890ff">963</td></tr>
+      </table>
+      <div style="text-align:center;margin-top:10px;color:#999;font-size:10px">分页: 1 2 3 ... 161</div>
+    </div>
+  </div>
+</div>
+
+<div class="section">
+  <h3>页面3 — 下载管理</h3>
+  <div class="mockup">
+    <div class="mockup-header">Data Download Manager</div>
+    <div class="mockup-body" style="padding:16px">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px">
+        <div style="border:1px solid #e8e8e8;border-radius:6px;padding:14px">
+          <div style="font-weight:600;margin-bottom:8px;color:#333">📡 股票数据</div>
+          <div style="font-size:10px;color:#999;margin-bottom:8px">
+            主源：东方财富 | 状态：<span style="color:#52c41a">正常</span><br>
+            备源：AKShare | 最后成功：2026-05-22 09:30
+          </div>
+          <button class="mock-button" style="background:#1890ff;color:#fff;border:none;padding:6px 16px;border-radius:4px">立即下载</button>
+        </div>
+        <div style="border:1px solid #e8e8e8;border-radius:6px;padding:14px">
+          <div style="font-weight:600;margin-bottom:8px;color:#333">📋 指数数据</div>
+          <div style="font-size:10px;color:#999;margin-bottom:8px">
+            主源：巨潮指数 | 状态：<span style="color:#52c41a">正常</span><br>
+            已下载：156个指数 | 成分股总数：4,826
+          </div>
+          <button class="mock-button" style="background:#1890ff;color:#fff;border:none;padding:6px 16px;border-radius:4px">刷新指数</button>
+        </div>
+      </div>
+      <div style="font-weight:600;margin-bottom:8px;color:#333;font-size:12px">下载日志</div>
+      <div style="background:#fafafa;border-radius:4px;padding:10px;font-size:10px;font-family:monospace;color:#666;max-height:120px;overflow:auto">
+        [2026-05-22 09:30:15] 股票数据下载完成 | 来源: Eastmoney | 4,862条 → 有效3,201条<br>
+        [2026-05-22 09:28:02] 开始下载股票数据...<br>
+        [2026-05-21 15:00:33] 指数数据刷新完成 | 156个指数下载成功<br>
+        [2026-05-21 14:55:10] 开始下载指数数据...
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="section">
+  <h3>页面4 — 指数详情</h3>
+  <div class="mockup">
+    <div class="mockup-header">Index Coverage Detail</div>
+    <div class="mockup-body" style="padding:16px">
+      <div style="display:flex;gap:12px;margin-bottom:14px">
+        <div style="flex:1">
+          <div style="font-weight:600;margin-bottom:8px;color:#333;font-size:12px">股票被收录指数排行</div>
+          <table style="width:100%;font-size:11px;border-collapse:collapse">
+            <tr style="background:#fafafa;border-bottom:1px solid #f0f0f0;color:#999"><td style="padding:4px 8px">股票</td><td>名称</td><td style="text-align:right">收录数</td><td style="text-align:right">排名</td></tr>
+            <tr><td style="padding:4px 8px">600519</td><td>贵州茅台</td><td style="text-align:right;font-weight:600">23</td><td style="text-align:right">1</td></tr>
+            <tr><td style="padding:4px 8px">000858</td><td>五粮液</td><td style="text-align:right;font-weight:600">18</td><td style="text-align:right">2</td></tr>
+          </table>
+        </div>
+        <div style="flex:1">
+          <div style="font-weight:600;margin-bottom:8px;color:#333;font-size:12px">成分股最多的指数 TOP 10</div>
+          <table style="width:100%;font-size:11px;border-collapse:collapse">
+            <tr style="background:#fafafa;border-bottom:1px solid #f0f0f0;color:#999"><td style="padding:4px 8px">指数</td><td style="text-align:right">成分数</td></tr>
+            <tr><td style="padding:4px 8px">000300 沪深300</td><td style="text-align:right">300</td></tr>
+            <tr><td style="padding:4px 8px">000905 中证500</td><td style="text-align:right">500</td></tr>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

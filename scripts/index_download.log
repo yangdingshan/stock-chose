@@ -1,0 +1,67 @@
+Starting index download: 51 indexes...
+  [1/51] 000001... 2226 stocks
+  [2/51] 000300... 300 stocks
+  [3/51] 000905... 500 stocks
+  [4/51] 000852... 1000 stocks
+  [5/51] 932000... 2000 stocks
+  [6/51] 000688... 50 stocks
+  [7/51] 000016... 50 stocks
+  [8/51] 000010... 180 stocks
+  [9/51] 000009... 380 stocks
+  [10/51] 000903... 100 stocks
+  [11/51] 000904... 200 stocks
+  [12/51] 000906... 800 stocks
+  [13/51] 399006... retry...
+  [13/51] 399006... retry...
+  [13/51] 399006... FAIL: Excel file format cannot be determined, you must specify an engine manually.
+  [14/51] 399330... retry...
+  [14/51] 399330... retry...
+  [14/51] 399330... FAIL: Excel file format cannot be determined, you must specify an engine manually.
+  [15/51] 399673... retry...
+  [15/51] 399673... retry...
+  [15/51] 399673... FAIL: Excel file format cannot be determined, you must specify an engine manually.
+  [16/51] 399001... retry...
+  [16/51] 399001... retry...
+  [16/51] 399001... FAIL: Excel file format cannot be determined, you must specify an engine manually.
+  [17/51] 399106... retry...
+  [17/51] 399106... retry...
+  [17/51] 399106... FAIL: Excel file format cannot be determined, you must specify an engine manually.
+  [18/51] 399102... retry...
+  [18/51] 399102... retry...
+  [18/51] 399102... FAIL: Excel file format cannot be determined, you must specify an engine manually.
+  [19/51] 000932... 38 stocks
+  [20/51] 000933... 75 stocks
+  [21/51] 000934... 98 stocks
+  [22/51] 000935... 133 stocks
+  [23/51] 000936... 47 stocks
+  [24/51] 000937... 37 stocks
+  [25/51] 000941... 50 stocks
+  [26/51] 000807... 50 stocks
+  [27/51] 000808... 99 stocks
+  [28/51] 000827... 100 stocks
+  [29/51] 000821... 50 stocks
+  [30/51] 399986... 42 stocks
+  [31/51] 399989... 50 stocks
+  [32/51] 399987... 27 stocks
+  [33/51] 399997... 18 stocks
+  [34/51] 399971... 50 stocks
+  [35/51] 399967... 78 stocks
+  [36/51] 399993... 98 stocks
+  [37/51] 000922... 100 stocks
+  [38/51] 000015... 50 stocks
+  [39/51] 000925... 50 stocks
+  [40/51] 930721... 57 stocks
+  [41/51] 930746... 149 stocks
+  [42/51] 930791... 197 stocks
+  [43/51] 930903... 5150 stocks
+  [44/51] 930904... 98 stocks
+  [45/51] 930905... 20 stocks
+  [46/51] 930906... 2 stocks
+  [47/51] 930907... 29 stocks
+  [48/51] 930901... 27 stocks
+  [49/51] 930902... 49 stocks
+  [50/51] 930910... 65 stocks
+  [51/51] 930914... 30 stocks
+
+Done! 45/51 indexes downloaded.
+Total stocks with index coverage: 5404

@@ -1,0 +1,72 @@
+<h2>系统架构设计</h2>
+<p class="subtitle">改造后的整体架构。这个方向可以吗？</p>
+
+<div class="section">
+  <h3>三层架构</h3>
+  <div class="mockup" style="margin-bottom:20px">
+    <div class="mockup-header">架构总览</div>
+    <div class="mockup-body" style="font-family:monospace;font-size:12px;line-height:1.8;padding:16px">
+      <div style="background:#f0f5ff;border:1px solid #d6e4ff;padding:10px 14px;margin-bottom:8px;border-radius:4px">
+        <strong>🖥 前端层 (Thymeleaf + Bootstrap 5)</strong><br>
+        <span style="color:#666">仪表盘 / 全部排名 / 下载管理 / 指数详情 &mdash; 四个页面</span>
+      </div>
+      <div style="text-align:center;color:#999;margin:4px 0">&darr; HTTP + AJAX</div>
+      <div style="background:#f6ffed;border:1px solid:#b7eb8f;padding:10px 14px;margin-bottom:8px;border-radius:4px">
+        <strong>⚙ 服务层 (Spring Boot)</strong><br>
+        <span style="color:#666">StockService (排名算法) &middot; DataDownloadService (下载编排) &middot; IndexService (指数处理)</span>
+      </div>
+      <div style="text-align:center;color:#999;margin:4px 0">&darr;</div>
+      <div style="background:#fff7e6;border:1px solid:#ffd591;padding:10px 14px;margin-bottom:8px;border-radius:4px">
+        <strong>📡 数据源适配层 (DataSource Adapter)</strong><br>
+        <span style="color:#666">EastmoneyAdapter &middot; AKShareAdapter &middot; TushareAdapter &mdash; 主备自动切换</span>
+      </div>
+      <div style="text-align:center;color:#999;margin:4px 0">&darr;</div>
+      <div style="background:#fafafa;border:1px solid #e8e8e8;padding:10px 14px;border-radius:4px">
+        <strong>💾 持久层</strong><br>
+        <span style="color:#666">MySQL (股票+排名数据) &middot; 本地文件缓存 (下载快照备份)</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="section">
+  <h3>数据下载流程（多数据源冗余）</h3>
+  <div class="mockup">
+    <div class="mockup-header">容错下载策略</div>
+    <div class="mockup-body" style="font-family:monospace;font-size:12px;line-height:1.8;padding:16px">
+      <div style="border-left:3px solid #52c41a;padding-left:12px;margin-bottom:8px">
+        <strong>1.</strong> 优先尝试 <strong>东方财富 API</strong> (免费、数据全)<br>
+        <span style="color:#999">3次重试 + 指数退避 + 随机UA</span>
+      </div>
+      <div style="border-left:3px solid #faad14;padding-left:12px;margin-bottom:8px">
+        <strong>2.</strong> 失败则切换 <strong>AKShare</strong> (开源Python库,通过HTTP调用)<br>
+        <span style="color:#999">启动本地Python微服务或直接HTTP代理</span>
+      </div>
+      <div style="border-left:3px solid #ff4d4f;padding-left:12px;margin-bottom:8px">
+        <strong>3.</strong> 都失败则加载 <strong>本地缓存快照</strong><br>
+        <span style="color:#999">上次成功下载的数据存为 JSON 备份，保证系统始终可用</span>
+      </div>
+      <div style="background:#f0f5ff;padding:8px 12px;border-radius:4px;margin-top:12px;font-size:11px;color:#666">
+        每次成功下载后自动更新本地缓存。前端显示数据来源和更新时间。
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="section">
+  <h3>页面结构</h3>
+  <div class="mockup">
+    <div class="mockup-header">四页面 + 顶部导航</div>
+    <div class="mockup-body" style="padding:8px">
+      <div class="mock-nav" style="margin-bottom:12px;background:#f0f5ff;border-bottom:2px solid #1890ff">
+        StockChose &nbsp;|&nbsp; <strong>仪表盘</strong> &nbsp;|&nbsp; 全部排名 &nbsp;|&nbsp; 下载管理 &nbsp;|&nbsp; 指数详情
+      </div>
+      <table style="width:100%;font-size:12px;line-height:1.8">
+        <tr><td style="width:24px;text-align:center;font-weight:700;color:#1890ff">1</td><td><strong>仪表盘</strong></td><td>&mdash; 核心指标卡片 + Top 20 推荐股票 + 数据状态面板</td></tr>
+        <tr><td style="text-align:center;font-weight:700;color:#1890ff">2</td><td><strong>全部排名</strong></td><td>&mdash; 可搜索、可排序、可筛选的全量排名表格</td></tr>
+        <tr><td style="text-align:center;font-weight:700;color:#1890ff">3</td><td><strong>下载管理</strong></td><td>&mdash; 触发下载、查看下载日志、数据源状态、上次更新时间</td></tr>
+        <tr><td style="text-align:center;font-weight:700;color:#1890ff">4</td><td><strong>指数详情</strong></td><td>&mdash; 查看每个指数的成分股列表、各股票被收录指数数统计</td></tr>
+      </table>
+    </div>
+  </div>
+</div>

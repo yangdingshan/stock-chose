@@ -1,0 +1,230 @@
+<div xmlns:th="http://www.thymeleaf.org">
+
+    <!-- ==================== 列表模式 ==================== -->
+
+    <th:block th:if="${!viewMode}">
+        <div class="page-header">
+            <h2>行业研究报告</h2>
+            <p class="text-muted">共 <span th:text="${reports.size()}">0</span> 份报告</p>
+        </div>
+
+        <form class="search-bar mb-4" method="get" th:action="@{/reports}">
+            <div class="input-group" style="max-width: 420px;">
+                <input type="text" name="search" class="form-control" placeholder="搜索报告标题..."
+                       th:value="${search}">
+                <button class="btn btn-primary" type="submit">搜索</button>
+                <a href="/reports" class="btn btn-outline-secondary" th:if="${!search.isEmpty()}">清除</a>
+            </div>
+        </form>
+
+        <div th:if="${reports.isEmpty()}" class="empty-state">
+            <div class="icon">📄</div>
+            <p th:text="${search.isEmpty()} ? '暂无报告，将 .md 文件放入 industry-analyst 目录即可自动识别' : '未找到匹配的报告'"></p>
+        </div>
+
+        <div class="report-grid">
+            <div class="report-card" th:each="r : ${reports}">
+                <div class="report-card-header">
+                    <h5 class="report-title" th:text="${r.title}">标题</h5>
+                    <div class="report-card-actions">
+                        <a th:href="@{/reports/view(file=${r.filename})}" class="btn btn-sm btn-outline-primary">查看</a>
+                        <button class="btn btn-sm btn-outline-danger" onclick="confirmDelete(this)"
+                                th:attr="data-file=${r.filename},data-title=${r.title}">删除</button>
+                    </div>
+                </div>
+                <div class="report-meta">
+                    <span class="report-date" th:if="${r.dateFormatted != null}" th:text="${r.dateFormatted}">日期</span>
+                    <span class="tag" th:each="tag : ${r.tags}" th:text="${tag}">标签</span>
+                </div>
+                <p class="report-summary" th:text="${r.summary}">摘要</p>
+            </div>
+        </div>
+    </th:block>
+
+    <!-- ==================== 查看模式 ==================== -->
+
+    <th:block th:if="${viewMode}">
+        <nav class="breadcrumb-nav mb-3">
+            <a href="/reports">报告列表</a>
+            <span class="separator">›</span>
+            <span class="current" th:text="${viewTitle}">标题</span>
+        </nav>
+
+        <div class="report-view-layout">
+            <!-- 正文区域 -->
+            <article class="report-detail" id="reportDetail">
+                <div class="report-detail-header">
+                    <h1 class="report-detail-title" th:text="${viewTitle}">标题</h1>
+                    <div class="report-detail-meta" th:if="${viewDateFormatted != null}">
+                        分析日期：<span th:text="${viewDateFormatted}">日期</span>
+                    </div>
+                </div>
+                <div class="markdown-body" th:utext="${viewHtml}"></div>
+            </article>
+
+            <!-- 目录侧栏 -->
+            <aside class="report-toc" id="reportToc">
+                <div class="toc-header">
+                    <h4>目录</h4>
+                </div>
+                <nav class="toc-nav" id="tocNav">
+                    <div class="toc-loading">加载目录中...</div>
+                </nav>
+            </aside>
+        </div>
+
+        <div class="report-detail-actions mt-4">
+            <a href="/reports" class="btn btn-outline-secondary">← 返回列表</a>
+            <button class="btn btn-outline-danger ms-2" onclick="confirmDelete(this)"
+                    th:attr="data-file=${viewFilename},data-title=${viewTitle}">删除</button>
+        </div>
+    </th:block>
+
+    <!-- ==================== 删除确认弹窗 ==================== -->
+
+    <div class="modal fade" id="deleteModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">确认删除</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <p>确定要删除报告 <strong id="deleteReportName"></strong> 吗？此操作不可恢复。</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">取消</button>
+                    <button type="button" class="btn btn-danger" id="confirmDeleteBtn">确认删除</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Mermaid + 目录导航，仅在查看模式加载 -->
+    <th:block th:if="${viewMode}">
+        <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+        <script>
+            (function() {
+                // --- Mermaid 图形渲染 ---
+                var mermaidBlocks = document.querySelectorAll('.markdown-body pre code.language-mermaid');
+                if (mermaidBlocks.length > 0) {
+                    mermaid.initialize({ startOnLoad: false, theme: 'default' });
+                    mermaidBlocks.forEach(function(code) {
+                        var div = document.createElement('div');
+                        div.className = 'mermaid';
+                        div.textContent = code.textContent;
+                        code.parentElement.replaceWith(div);
+                    });
+                    mermaid.run();
+                }
+
+                // --- 目录生成 ---
+                buildToc();
+            })();
+
+            function buildToc() {
+                var headings = document.querySelectorAll('.markdown-body h2, .markdown-body h3');
+                var tocNav = document.getElementById('tocNav');
+                if (!headings.length || !tocNav) {
+                    if (tocNav) tocNav.innerHTML = '<div class="toc-empty">无章节标题</div>';
+                    return;
+                }
+
+                var list = document.createElement('ul');
+                list.className = 'toc-list';
+
+                headings.forEach(function(h, i) {
+                    // 生成 ID
+                    if (!h.id) {
+                        var slug = h.textContent
+                            .replace(/[^\w一-鿿]+/g, '-')
+                            .replace(/^-|-$/g, '')
+                            .toLowerCase();
+                        if (!slug) slug = 'section-' + i;
+                        h.id = slug;
+                    }
+
+                    var li = document.createElement('li');
+                    li.className = h.tagName === 'H3' ? 'toc-item toc-h3' : 'toc-item';
+                    var a = document.createElement('a');
+                    a.href = '#' + h.id;
+                    a.textContent = h.textContent;
+                    a.setAttribute('data-target', h.id);
+                    a.addEventListener('click', function(e) {
+                        e.preventDefault();
+                        var target = document.getElementById(this.getAttribute('data-target'));
+                        if (target) {
+                            target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                            history.replaceState(null, '', '#' + this.getAttribute('data-target'));
+                        }
+                    });
+                    li.appendChild(a);
+                    list.appendChild(li);
+                });
+
+                tocNav.innerHTML = '';
+                tocNav.appendChild(list);
+
+                // --- 滚动高亮 ---
+                var tocLinks = tocNav.querySelectorAll('a');
+                var observer = new IntersectionObserver(function(entries) {
+                    entries.forEach(function(entry) {
+                        var id = entry.target.id;
+                        var link = tocNav.querySelector('a[data-target="' + id + '"]');
+                        if (link) {
+                            if (entry.isIntersecting) {
+                                tocLinks.forEach(function(l) { l.classList.remove('active'); });
+                                link.classList.add('active');
+                            }
+                        }
+                    });
+                }, { rootMargin: '-80px 0px -70% 0px' });
+
+                document.querySelectorAll('.markdown-body h2[id], .markdown-body h3[id]').forEach(function(h) {
+                    observer.observe(h);
+                });
+            }
+        </script>
+    </th:block>
+
+    <script th:inline="javascript">
+        var deleteFile = '';
+        var deleteBtn = null;
+
+        function confirmDelete(btn) {
+            deleteBtn = btn;
+            deleteFile = btn.getAttribute('data-file');
+            document.getElementById('deleteReportName').textContent = btn.getAttribute('data-title');
+            var modal = new bootstrap.Modal(document.getElementById('deleteModal'));
+            modal.show();
+        }
+
+        document.getElementById('confirmDeleteBtn').addEventListener('click', function() {
+            var formData = new URLSearchParams();
+            formData.append('file', deleteFile);
+            fetch('/reports/delete', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                body: formData.toString()
+            })
+            .then(function(r) { return r.json(); })
+            .then(function(data) {
+                if (data.success) {
+                    var modal = bootstrap.Modal.getInstance(document.getElementById('deleteModal'));
+                    modal.hide();
+                    if (deleteBtn && deleteBtn.closest('.report-card')) {
+                        deleteBtn.closest('.report-card').remove();
+                    } else {
+                        window.location.href = '/reports';
+                    }
+                } else {
+                    alert('删除失败: ' + (data.error || '未知错误'));
+                }
+            })
+            .catch(function(err) {
+                alert('删除请求失败: ' + err.message);
+            });
+        });
+    </script>
+
+</div>

@@ -1,0 +1,11 @@
+{
+  "permissions": {
+    "allow": [
+      "WebSearch",
+      "WebFetch(domain:data.eastmoney.com)",
+      "WebFetch(domain:www.szse.cn)",
+      "WebFetch(domain:www.hkex.com.hk)",
+      "mcp__MiniMax__web_search"
+    ]
+  }
+}

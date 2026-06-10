@@ -1,0 +1,104 @@
+<div th:fragment="content">
+    <div class="section-header">
+        <span class="section-title">全部排名</span>
+    </div>
+
+    <form class="filter-bar" method="get" action="/ranking">
+        <input class="filter-input" type="text" name="search" placeholder="搜索代码或名称..." th:value="${search}">
+        <select class="filter-select" name="industry">
+            <option value="">全部行业</option>
+            <option th:each="ind : ${industries}" th:value="${ind}" th:text="${ind}"
+                    th:selected="${industry == ind}">行业</option>
+        </select>
+        <select class="filter-select" name="market">
+            <option value="">全部市场</option>
+            <option value="沪市A股" th:selected="${market == '沪市A股'}">沪市A股</option>
+            <option value="深市A股" th:selected="${market == '深市A股'}">深市A股</option>
+            <option value="创业板" th:selected="${market == '创业板'}">创业板</option>
+            <option value="科创板" th:selected="${market == '科创板'}">科创板</option>
+            <option value="中小板" th:selected="${market == '中小板'}">中小板</option>
+        </select>
+        <select class="filter-select" name="sort">
+            <option value="composite" th:selected="${sort == 'composite'}">排序：综合得分</option>
+            <option value="pe" th:selected="${sort == 'pe'}">排序：PE排名</option>
+            <option value="roe" th:selected="${sort == 'roe'}">排序：ROE排名</option>
+            <option value="coverage" th:selected="${sort == 'coverage'}">排序：指数覆盖</option>
+        </select>
+        <button type="submit" class="btn-dl" style="padding:8px 16px;font-size:12px">筛选</button>
+        <span class="filter-count" th:text="'共 ' + ${totalCount} + ' 条'">共 0 条</span>
+    </form>
+
+    <div class="table-wrap">
+        <table class="table-custom">
+            <thead>
+                <tr>
+                    <th style="width:48px">排名</th>
+                    <th>代码</th>
+                    <th>名称</th>
+                    <th>行业</th>
+                    <th>市场</th>
+                    <th class="right">市盈率</th>
+                    <th class="right">PE排名</th>
+                    <th class="right">市净率</th>
+                    <th class="right">ROE</th>
+                    <th class="right">ROE排名</th>
+                    <th class="right">指数覆盖</th>
+                    <th class="right">综合得分</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr th:each="stock,iterStat : ${stocks}">
+                    <td><span class="rank-badge" th:text="${currentPageNum * pageSize + iterStat.index + 1}">1</span></td>
+                    <td style="font-weight:600" th:text="${stock.code}"></td>
+                    <td th:text="${stock.name}"></td>
+                    <td style="color:var(--text-secondary);font-size:12px" th:text="${stock.industry}">-</td>
+                    <td style="color:var(--text-secondary);font-size:12px" th:text="${stock.stockMarket}"></td>
+                    <td class="right" th:text="${stock.pe}"></td>
+                    <td class="right" th:text="${stock.peRank}"></td>
+                    <td class="right" th:text="${stock.pb}"></td>
+                    <td class="right" th:text="${stock.roe} + '%'"></td>
+                    <td class="right" th:text="${stock.roeRank}"></td>
+                    <td class="right" th:text="${stock.indexCount}"></td>
+                    <td class="right score-highlight" th:text="${stock.indexPeRoeRank}"></td>
+                </tr>
+                <tr th:if="${stocks == null || stocks.isEmpty()}">
+                    <td colspan="12" style="text-align:center;padding:40px;color:var(--text-tertiary)">暂无数据</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div class="pagination-bar" th:if="${totalPages > 1}">
+        <div class="pagination-info">
+            共 <b th:text="${totalCount}">0</b> 条，
+            第 <b th:text="${currentPageNum + 1}">1</b>/<b th:text="${totalPages}">1</b> 页
+        </div>
+        <div class="pagination-nav">
+            <a th:if="${currentPageNum > 0}" class="page-num"
+               th:href="@{/ranking(search=${search}, industry=${industry}, market=${market}, sort=${sort}, page=0, pageSize=${pageSize})}">首页</a>
+            <a th:if="${currentPageNum > 0}" class="page-num"
+               th:href="@{/ranking(search=${search}, industry=${industry}, market=${market}, sort=${sort}, page=${currentPageNum - 1}, pageSize=${pageSize})}">上一页</a>
+            <th:block th:each="p : ${pageNums}">
+                <span th:if="${p['num'] == -1}" class="page-num" style="border:none;pointer-events:none">...</span>
+                <a th:unless="${p['num'] == -1}"
+                   th:class="${p['num'] == currentPageNum ? 'page-num active' : 'page-num'}"
+                   th:href="@{/ranking(search=${search}, industry=${industry}, market=${market}, sort=${sort}, page=${p['num']}, pageSize=${pageSize})}"
+                   th:text="${p['label']}">1</a>
+            </th:block>
+            <a th:if="${currentPageNum < totalPages - 1}" class="page-num"
+               th:href="@{/ranking(search=${search}, industry=${industry}, market=${market}, sort=${sort}, page=${currentPageNum + 1}, pageSize=${pageSize})}">下一页</a>
+            <a th:if="${currentPageNum < totalPages - 1}" class="page-num"
+               th:href="@{/ranking(search=${search}, industry=${industry}, market=${market}, sort=${sort}, page=${totalPages - 1}, pageSize=${pageSize})}">末页</a>
+        </div>
+        <div class="pagination-size">
+            <span>每页</span>
+            <a th:class="${pageSize == 20 ? 'page-num active' : 'page-num'}"
+               th:href="@{/ranking(search=${search}, industry=${industry}, market=${market}, sort=${sort}, page=0, pageSize=20)}">20</a>
+            <a th:class="${pageSize == 50 ? 'page-num active' : 'page-num'}"
+               th:href="@{/ranking(search=${search}, industry=${industry}, market=${market}, sort=${sort}, page=0, pageSize=50)}">50</a>
+            <a th:class="${pageSize == 100 ? 'page-num active' : 'page-num'}"
+               th:href="@{/ranking(search=${search}, industry=${industry}, market=${market}, sort=${sort}, page=0, pageSize=100)}">100</a>
+            <span>条</span>
+        </div>
+    </div>
+</div>

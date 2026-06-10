@@ -1,0 +1,292 @@
+<style>
+  :root {
+    --bg: #f8f9fa;
+    --surface: #ffffff;
+    --border: #e9ecef;
+    --text: #1a1a2e;
+    --text-secondary: #6c757d;
+    --text-tertiary: #adb5bd;
+    --accent: #0d6efd;
+    --accent-soft: #e7f1ff;
+    --green: #20c997;
+    --green-soft: #e6fcf5;
+    --amber: #f59f00;
+    --amber-soft: #fff9db;
+    --rose: #e64980;
+    --slate: #495057;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: 'Segoe UI', system-ui, -apple-system, sans-serif; background: var(--bg); color: var(--text); -webkit-font-smoothing: antialiased; }
+
+  .page { max-width: 1280px; margin: 0 auto; padding: 32px 40px; }
+
+  /* Nav */
+  .nav { display: flex; align-items: center; justify-content: space-between; padding: 16px 40px; background: var(--surface); border-bottom: 1px solid var(--border); position: sticky; top: 0; z-index: 10; }
+  .nav-brand { font-size: 18px; font-weight: 700; letter-spacing: -0.5px; color: var(--text); }
+  .nav-links { display: flex; gap: 4px; }
+  .nav-link { padding: 8px 16px; border-radius: 6px; font-size: 13px; font-weight: 500; color: var(--text-secondary); text-decoration: none; transition: all 0.15s; }
+  .nav-link:hover { background: var(--bg); color: var(--text); }
+  .nav-link.active { background: var(--accent-soft); color: var(--accent); }
+
+  /* Stats Row */
+  .stats { display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap: 16px; margin-bottom: 32px; }
+  .stat { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 20px 24px; }
+  .stat-label { font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.8px; color: var(--text-tertiary); margin-bottom: 6px; }
+  .stat-value { font-size: 28px; font-weight: 700; letter-spacing: -1px; color: var(--text); }
+  .stat-sub { font-size: 12px; color: var(--text-secondary); margin-top: 4px; }
+  .stat.accent { border-left: 3px solid var(--accent); }
+  .stat.green { border-left: 3px solid var(--green); }
+  .stat.amber { border-left: 3px solid var(--amber); }
+
+  /* Section */
+  .section-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; }
+  .section-title { font-size: 16px; font-weight: 600; letter-spacing: -0.3px; }
+  .section-link { font-size: 12px; font-weight: 500; color: var(--accent); text-decoration: none; }
+
+  /* Table */
+  .table-wrap { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; overflow: hidden; }
+  table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  thead th { text-align: left; padding: 12px 16px; font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; color: var(--text-tertiary); background: #fafbfc; border-bottom: 1px solid var(--border); }
+  thead th.right { text-align: right; }
+  tbody td { padding: 10px 16px; border-bottom: 1px solid #f1f3f5; color: var(--text); }
+  tbody td.right { text-align: right; font-variant-numeric: tabular-nums; }
+  tbody tr:hover { background: #fafbfc; }
+  .rank-num { display: inline-flex; align-items: center; justify-content: center; width: 24px; height: 24px; border-radius: 6px; font-size: 11px; font-weight: 700; }
+  .rank-1 { background: var(--amber-soft); color: var(--amber); }
+  .rank-2 { background: #f1f3f5; color: var(--slate); }
+  .rank-3 { background: #fff0e6; color: #e8590c; }
+
+  /* Download panels */
+  .download-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 24px; }
+  .dl-panel { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 24px; }
+  .dl-panel-title { font-size: 15px; font-weight: 600; letter-spacing: -0.3px; margin-bottom: 4px; }
+  .dl-panel-desc { font-size: 12px; color: var(--text-secondary); margin-bottom: 16px; }
+  .dl-meta { display: flex; gap: 24px; margin-bottom: 16px; }
+  .dl-meta-item { }
+  .dl-meta-label { font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; color: var(--text-tertiary); }
+  .dl-meta-val { font-size: 13px; color: var(--text); margin-top: 2px; }
+  .dl-btn { display: inline-flex; align-items: center; gap: 6px; padding: 10px 20px; border-radius: 8px; font-size: 13px; font-weight: 600; border: none; cursor: pointer; transition: all 0.15s; }
+  .dl-btn.primary { background: var(--accent); color: #fff; }
+  .dl-btn.primary:hover { filter: brightness(1.1); }
+  .dl-btn:active { transform: translateY(1px); }
+  .status-dot { display: inline-block; width: 6px; height: 6px; border-radius: 50%; margin-right: 6px; }
+  .status-dot.ok { background: var(--green); }
+
+  /* Log */
+  .log-box { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 16px 20px; font-family: 'JetBrains Mono', 'Cascadia Code', monospace; font-size: 11px; line-height: 1.8; color: var(--text-secondary); max-height: 160px; overflow-y: auto; }
+  .log-time { color: var(--text-tertiary); }
+
+  /* Index page */
+  .index-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  .index-panel { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; overflow: hidden; }
+  .index-panel-header { padding: 16px 20px; font-size: 14px; font-weight: 600; letter-spacing: -0.3px; border-bottom: 1px solid var(--border); }
+  .index-panel-body { padding: 8px 0; }
+
+  /* Filter bar */
+  .filter-bar { display: flex; gap: 8px; align-items: center; margin-bottom: 16px; flex-wrap: wrap; }
+  .filter-input { padding: 8px 14px; border: 1px solid var(--border); border-radius: 8px; font-size: 13px; width: 200px; outline: none; background: var(--surface); }
+  .filter-input:focus { border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-soft); }
+  .filter-select { padding: 8px 14px; border: 1px solid var(--border); border-radius: 8px; font-size: 13px; background: var(--surface); outline: none; cursor: pointer; color: var(--text); }
+  .filter-count { margin-left: auto; font-size: 12px; color: var(--text-tertiary); }
+
+  /* Pagination */
+  .pagination { display: flex; justify-content: center; gap: 4px; margin-top: 16px; }
+  .page-btn { width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; border-radius: 6px; font-size: 12px; font-weight: 500; border: 1px solid var(--border); background: var(--surface); color: var(--text); cursor: pointer; transition: all 0.15s; }
+  .page-btn.active { background: var(--accent); color: #fff; border-color: var(--accent); }
+  .page-btn:hover:not(.active) { background: var(--bg); }
+
+  .chip { display: inline-flex; align-items: center; padding: 4px 10px; border-radius: 6px; font-size: 11px; font-weight: 600; }
+  .chip-ok { background: var(--green-soft); color: var(--green); }
+</style>
+
+<h2 style="font-size:22px;font-weight:700;letter-spacing:-0.5px;margin-bottom:4px">StockChose</h2>
+<p style="font-size:13px;color:var(--text-secondary);margin-bottom:24px">A-share quantitative scoring system. Clean, data-first interface.</p>
+
+<div class="section">
+  <div class="section-header">
+    <span class="section-title">Dashboard</span>
+    <span style="font-size:11px;color:var(--text-tertiary)">Data as of 2026-05-22 09:30 CST</span>
+  </div>
+  <div class="stats">
+    <div class="stat accent">
+      <div class="stat-label">Total A-Shares</div>
+      <div class="stat-value">4,862</div>
+      <div class="stat-sub">Eastmoney primary source</div>
+    </div>
+    <div class="stat green">
+      <div class="stat-label">Qualified Stocks</div>
+      <div class="stat-value">3,201</div>
+      <div class="stat-sub">After ST/negative filter</div>
+    </div>
+    <div class="stat amber">
+      <div class="stat-label">Indices Tracked</div>
+      <div class="stat-value">156</div>
+      <div class="stat-sub">CSI index constituents</div>
+    </div>
+    <div class="stat">
+      <div class="stat-label">Composite Model</div>
+      <div class="stat-value" style="font-size:18px">PE + ROE + Coverage</div>
+      <div class="stat-sub">Three-factor ranking</div>
+    </div>
+  </div>
+
+  <div class="section-header">
+    <span class="section-title">Composite Top 20</span>
+    <a href="#" class="section-link">View full ranking</a>
+  </div>
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th style="width:48px">#</th><th>Code</th><th>Name</th><th class="right">PE</th><th class="right">PB</th><th class="right">ROE</th><th class="right">PE Rank</th><th class="right">ROE Rank</th><th class="right">Coverage</th><th class="right">Score</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><span class="rank-num rank-1">1</span></td><td style="font-weight:600">600519</td><td>Kweichow Moutai</td><td class="right">28.5</td><td class="right">8.2</td><td class="right">28.3%</td><td class="right">1,234</td><td class="right">56</td><td class="right">23</td><td class="right" style="font-weight:700;color:var(--accent)">1,313</td>
+        </tr>
+        <tr>
+          <td><span class="rank-num rank-2">2</span></td><td style="font-weight:600">000858</td><td>Wuliangye</td><td class="right">22.1</td><td class="right">5.8</td><td class="right">24.1%</td><td class="right">856</td><td class="right">89</td><td class="right">18</td><td class="right" style="font-weight:700;color:var(--accent)">963</td>
+        </tr>
+        <tr>
+          <td><span class="rank-num rank-3">3</span></td><td style="font-weight:600">601318</td><td>Ping An Insurance</td><td class="right">9.8</td><td class="right">1.1</td><td class="right">18.7%</td><td class="right">234</td><td class="right">1,023</td><td class="right">31</td><td class="right" style="font-weight:700;color:var(--accent)">1,288</td>
+        </tr>
+        <tr>
+          <td><span class="rank-num">4</span></td><td style="font-weight:600">600036</td><td>China Merchants Bank</td><td class="right">6.2</td><td class="right">0.9</td><td class="right">15.8%</td><td class="right">98</td><td class="right">1,845</td><td class="right">28</td><td class="right" style="font-weight:700;color:var(--accent)">1,971</td>
+        </tr>
+        <tr>
+          <td><span class="rank-num">5</span></td><td style="font-weight:600">000333</td><td>Midea Group</td><td class="right">12.4</td><td class="right">3.1</td><td class="right">22.6%</td><td class="right">412</td><td class="right">134</td><td class="right">15</td><td class="right" style="font-weight:700;color:var(--accent)">561</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<div style="height:48px"></div>
+
+<div class="section">
+  <div class="section-header">
+    <span class="section-title">Full Ranking</span>
+  </div>
+  <div class="filter-bar">
+    <input class="filter-input" placeholder="Search code or name..." value="">
+    <select class="filter-select"><option>All Markets</option><option>Shanghai A</option><option>Shenzhen A</option><option>ChiNext</option><option>STAR</option></select>
+    <select class="filter-select"><option>Sort: Composite Score</option><option>PE Rank</option><option>ROE Rank</option><option>Index Coverage</option></select>
+    <span class="filter-count">3,201 results</span>
+  </div>
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr><th style="width:48px">#</th><th>Code</th><th>Name</th><th>Market</th><th class="right">PE</th><th class="right">PE Rk</th><th class="right">PB</th><th class="right">ROE</th><th class="right">ROE Rk</th><th class="right">Cov</th><th class="right">Score</th></tr>
+      </thead>
+      <tbody>
+        <tr><td><span class="rank-num rank-1">1</span></td><td style="font-weight:600">600519</td><td>Kweichow Moutai</td><td style="color:var(--text-secondary);font-size:12px">Shanghai A</td><td class="right">28.5</td><td class="right">1,234</td><td class="right">8.2</td><td class="right">28.3%</td><td class="right">56</td><td class="right">23</td><td class="right" style="font-weight:700;color:var(--accent)">1,313</td></tr>
+        <tr style="background:#fafbfc"><td><span class="rank-num rank-2">2</span></td><td style="font-weight:600">000858</td><td>Wuliangye</td><td style="color:var(--text-secondary);font-size:12px">Shenzhen A</td><td class="right">22.1</td><td class="right">856</td><td class="right">5.8</td><td class="right">24.1%</td><td class="right">89</td><td class="right">18</td><td class="right" style="font-weight:700;color:var(--accent)">963</td></tr>
+        <tr><td><span class="rank-num rank-3">3</span></td><td style="font-weight:600">601318</td><td>Ping An Insurance</td><td style="color:var(--text-secondary);font-size:12px">Shanghai A</td><td class="right">9.8</td><td class="right">234</td><td class="right">1.1</td><td class="right">18.7%</td><td class="right">1,023</td><td class="right">31</td><td class="right" style="font-weight:700;color:var(--accent)">1,288</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="pagination">
+    <span class="page-btn">1</span>
+    <span class="page-btn" style="color:var(--text-secondary)">2</span>
+    <span class="page-btn" style="color:var(--text-secondary)">3</span>
+    <span class="page-btn" style="color:var(--text-tertiary);border:none">...</span>
+    <span class="page-btn" style="color:var(--text-secondary)">161</span>
+  </div>
+</div>
+
+<div style="height:48px"></div>
+
+<div class="section">
+  <div class="section-header">
+    <span class="section-title">Data Download</span>
+  </div>
+  <div class="download-grid">
+    <div class="dl-panel">
+      <div class="dl-panel-title">Stock Data</div>
+      <div class="dl-panel-desc">A-share fundamentals from multiple sources</div>
+      <div class="dl-meta">
+        <div class="dl-meta-item">
+          <div class="dl-meta-label">Primary</div>
+          <div class="dl-meta-val"><span class="status-dot ok"></span>Eastmoney</div>
+        </div>
+        <div class="dl-meta-item">
+          <div class="dl-meta-label">Fallback</div>
+          <div class="dl-meta-val">AKShare</div>
+        </div>
+        <div class="dl-meta-item">
+          <div class="dl-meta-label">Last Success</div>
+          <div class="dl-meta-val">2026-05-22 09:30</div>
+        </div>
+      </div>
+      <button class="dl-btn primary">Download Now</button>
+    </div>
+    <div class="dl-panel">
+      <div class="dl-panel-title">Index Constituents</div>
+      <div class="dl-panel-desc">CSI index member lists from csindex.com.cn</div>
+      <div class="dl-meta">
+        <div class="dl-meta-item">
+          <div class="dl-meta-label">Status</div>
+          <div class="dl-meta-val"><span class="status-dot ok"></span>Healthy</div>
+        </div>
+        <div class="dl-meta-item">
+          <div class="dl-meta-label">Indices</div>
+          <div class="dl-meta-val">156 loaded</div>
+        </div>
+        <div class="dl-meta-item">
+          <div class="dl-meta-label">Constituents</div>
+          <div class="dl-meta-val">4,826 entries</div>
+        </div>
+      </div>
+      <button class="dl-btn primary">Refresh Indices</button>
+    </div>
+  </div>
+  <div class="section-header" style="margin-top:8px">
+    <span class="section-title" style="font-size:14px">Download Log</span>
+  </div>
+  <div class="log-box">
+    <span class="log-time">[2026-05-22 09:30:15]</span> Stock download completed. Source: Eastmoney. 4,862 raw &rarr; 3,201 qualified<br>
+    <span class="log-time">[2026-05-22 09:28:02]</span> Starting stock data download...<br>
+    <span class="log-time">[2026-05-21 15:00:33]</span> Index refresh completed. 156 indices downloaded successfully<br>
+    <span class="log-time">[2026-05-21 14:55:10]</span> Starting index data download...
+  </div>
+</div>
+
+<div style="height:48px"></div>
+
+<div class="section">
+  <div class="section-header">
+    <span class="section-title">Index Coverage</span>
+  </div>
+  <div class="index-grid">
+    <div class="index-panel">
+      <div class="index-panel-header">Stocks by Index Coverage</div>
+      <div class="index-panel-body">
+        <table>
+          <thead><tr><th>Stock</th><th>Name</th><th class="right">Coverage</th><th class="right">Rank</th></tr></thead>
+          <tbody>
+            <tr><td style="font-weight:600">600519</td><td>Kweichow Moutai</td><td class="right" style="font-weight:700;color:var(--accent)">23</td><td class="right">1</td></tr>
+            <tr><td style="font-weight:600">000858</td><td>Wuliangye</td><td class="right" style="font-weight:700;color:var(--accent)">18</td><td class="right">2</td></tr>
+            <tr><td style="font-weight:600">601318</td><td>Ping An Insurance</td><td class="right" style="font-weight:700;color:var(--accent)">31</td><td class="right">1</td></tr>
+            <tr><td style="font-weight:600">600036</td><td>China Merchants Bank</td><td class="right" style="font-weight:700;color:var(--accent)">28</td><td class="right">2</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <div class="index-panel">
+      <div class="index-panel-header">Largest Indices by Constituents</div>
+      <div class="index-panel-body">
+        <table>
+          <thead><tr><th>Index</th><th>Name</th><th class="right">Members</th></tr></thead>
+          <tbody>
+            <tr><td style="font-weight:600">000300</td><td>CSI 300</td><td class="right">300</td></tr>
+            <tr><td style="font-weight:600">000905</td><td>CSI 500</td><td class="right">500</td></tr>
+            <tr><td style="font-weight:600">000852</td><td>CSI 1000</td><td class="right">1,000</td></tr>
+            <tr><td style="font-weight:600">000688</td><td>STAR 50</td><td class="right">50</td></tr>
+            <tr><td style="font-weight:600">000016</td><td>SSE 50</td><td class="right">50</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>

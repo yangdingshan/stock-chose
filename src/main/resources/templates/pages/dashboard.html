@@ -1,0 +1,88 @@
+<div th:fragment="content">
+    <div class="section-header">
+        <span class="section-title">仪表盘</span>
+        <span style="font-size:11px;color:var(--text-tertiary)" th:if="${lastDownloadTime}">
+            数据更新于 <span th:text="${lastDownloadTime}"></span>
+            <span th:if="${lastDownloadSource}"> · 来源: <span th:text="${lastDownloadSource}"></span></span>
+        </span>
+        <span style="font-size:11px;color:var(--text-tertiary)" th:unless="${lastDownloadTime}">
+            暂无数据，请前往下载管理获取数据
+        </span>
+    </div>
+
+    <div class="stats-row">
+        <div class="stat-card accent">
+            <div class="stat-label">A股总数</div>
+            <div class="stat-value" th:text="${totalStocks}">0</div>
+            <div class="stat-sub">数据库中的股票数量</div>
+        </div>
+        <div class="stat-card green">
+            <div class="stat-label">有效标的</div>
+            <div class="stat-value" th:text="${qualifiedStocks}">0</div>
+            <div class="stat-sub">已剔除ST及负值标的</div>
+        </div>
+        <div class="stat-card amber">
+            <div class="stat-label">收录指数</div>
+            <div class="stat-value" th:text="${indexCount}">0</div>
+            <div class="stat-sub">巨潮指数成分股</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-label">评分模型</div>
+            <div class="stat-value" style="font-size:18px">PE + ROE + 指数</div>
+            <div class="stat-sub">三因子综合排名</div>
+        </div>
+    </div>
+
+    <div th:if="${topStocks != null && !topStocks.isEmpty()}">
+        <div class="section-header">
+            <span class="section-title">综合排名 Top 20</span>
+            <a href="/ranking" style="font-size:12px;font-weight:500;color:var(--accent);text-decoration:none">查看全部排名</a>
+        </div>
+        <div class="table-wrap">
+            <table class="table-custom">
+                <thead>
+                    <tr>
+                        <th style="width:48px">排名</th>
+                        <th>代码</th>
+                        <th>名称</th>
+                        <th class="right">股价</th>
+                        <th class="right">市盈率</th>
+                        <th class="right">市净率</th>
+                        <th class="right">ROE</th>
+                        <th class="right">PE排名</th>
+                        <th class="right">ROE排名</th>
+                        <th class="right">指数覆盖</th>
+                        <th class="right">综合得分</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:each="stock,iterStat : ${topStocks}">
+                        <td>
+                            <span class="rank-badge" th:classappend="${iterStat.index == 0} ? 'rank-1' : (${iterStat.index == 1} ? 'rank-2' : (${iterStat.index == 2} ? 'rank-3' : ''))"
+                                  th:text="${iterStat.index + 1}">1</span>
+                        </td>
+                        <td style="font-weight:600" th:text="${stock.code}">600519</td>
+                        <td th:text="${stock.name}">贵州茅台</td>
+                        <td class="right" th:text="${stock.price}">0.00</td>
+                        <td class="right" th:text="${stock.pe}">0.0</td>
+                        <td class="right" th:text="${stock.pb}">0.0</td>
+                        <td class="right" th:text="${stock.roe} + '%'">0.0%</td>
+                        <td class="right" th:text="${stock.peRank}">0</td>
+                        <td class="right" th:text="${stock.roeRank}">0</td>
+                        <td class="right" th:text="${stock.indexCount}">0</td>
+                        <td class="right score-highlight" th:text="${stock.indexPeRoeRank}">0</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div th:unless="${topStocks != null && !topStocks.isEmpty()}" class="mt-section">
+        <div style="background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:60px;text-align:center">
+            <div style="font-size:40px;margin-bottom:16px;opacity:0.3">&#8943;</div>
+            <div style="font-size:15px;font-weight:600;color:var(--text);margin-bottom:8px">暂无股票数据</div>
+            <div style="font-size:13px;color:var(--text-secondary);margin-bottom:20px">请前往下载管理页面获取最新的A股数据</div>
+            <a href="/download" style="display:inline-flex;align-items:center;gap:6px;padding:10px 20px;border-radius:8px;font-size:13px;font-weight:600;background:var(--accent);color:#fff;text-decoration:none">前往下载</a>
+        </div>
+    </div>
+</div>

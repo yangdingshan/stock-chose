@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="${title} + ' - StockChose'">StockChose</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+<nav class="navbar-custom sticky-top">
+    <div class="d-flex align-items-center justify-content-between w-100">
+        <a href="/" class="navbar-brand text-decoration-none">StockChose</a>
+        <div class="d-flex">
+            <a href="/" class="nav-link" th:classappend="${currentPage == 'dashboard'} ? 'active'">仪表盘</a>
+            <a href="/ranking" class="nav-link" th:classappend="${currentPage == 'ranking'} ? 'active'">全部排名</a>
+            <a href="/download" class="nav-link" th:classappend="${currentPage == 'download'} ? 'active'">下载管理</a>
+            <a href="/index" class="nav-link" th:classappend="${currentPage == 'index'} ? 'active'">指数详情</a>
+            <a href="/reports" class="nav-link" th:classappend="${currentPage == 'reports'} ? 'active'">行业报告</a>
+            <a href="/stock-reports" class="nav-link" th:classappend="${currentPage == 'stock-reports'} ? 'active'">个股报告</a>
+        </div>
+    </div>
+</nav>
+<div class="page-content">
+    <div th:replace="${content}"></div>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

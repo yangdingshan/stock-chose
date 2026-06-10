@@ -1,0 +1,309 @@
+<style>
+  :root {
+    --bg: #f8f9fa;
+    --surface: #ffffff;
+    --border: #e9ecef;
+    --text: #1a1a2e;
+    --text-secondary: #6c757d;
+    --text-tertiary: #adb5bd;
+    --accent: #0d6efd;
+    --accent-soft: #e7f1ff;
+    --green: #20c997;
+    --green-soft: #e6fcf5;
+    --amber: #f59f00;
+    --amber-soft: #fff9db;
+    --rose: #e64980;
+    --slate: #495057;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', system-ui, -apple-system, sans-serif; background: var(--bg); color: var(--text); -webkit-font-smoothing: antialiased; }
+
+  .page { max-width: 1280px; margin: 0 auto; padding: 32px 40px; }
+
+  /* Nav */
+  .nav { display: flex; align-items: center; justify-content: space-between; padding: 16px 40px; background: var(--surface); border-bottom: 1px solid var(--border); position: sticky; top: 0; z-index: 10; }
+  .nav-brand { font-size: 18px; font-weight: 700; letter-spacing: -0.5px; color: var(--text); }
+  .nav-links { display: flex; gap: 4px; }
+  .nav-link { padding: 8px 16px; border-radius: 6px; font-size: 13px; font-weight: 500; color: var(--text-secondary); text-decoration: none; transition: all 0.15s; }
+  .nav-link:hover { background: var(--bg); color: var(--text); }
+  .nav-link.active { background: var(--accent-soft); color: var(--accent); }
+
+  /* Stats Row */
+  .stats { display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap: 16px; margin-bottom: 32px; }
+  .stat { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 20px 24px; }
+  .stat-label { font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.8px; color: var(--text-tertiary); margin-bottom: 6px; }
+  .stat-value { font-size: 28px; font-weight: 700; letter-spacing: -1px; color: var(--text); }
+  .stat-sub { font-size: 12px; color: var(--text-secondary); margin-top: 4px; }
+  .stat.accent { border-left: 3px solid var(--accent); }
+  .stat.green { border-left: 3px solid var(--green); }
+  .stat.amber { border-left: 3px solid var(--amber); }
+
+  /* Section */
+  .section-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; }
+  .section-title { font-size: 16px; font-weight: 600; letter-spacing: -0.3px; }
+  .section-link { font-size: 12px; font-weight: 500; color: var(--accent); text-decoration: none; }
+
+  /* Table */
+  .table-wrap { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; overflow: hidden; }
+  table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  thead th { text-align: left; padding: 12px 16px; font-size: 11px; font-weight: 600; color: var(--text-tertiary); background: #fafbfc; border-bottom: 1px solid var(--border); white-space: nowrap; }
+  thead th.right { text-align: right; }
+  tbody td { padding: 10px 16px; border-bottom: 1px solid #f1f3f5; color: var(--text); }
+  tbody td.right { text-align: right; font-variant-numeric: tabular-nums; }
+  tbody tr:hover { background: #fafbfc; }
+  .rank-num { display: inline-flex; align-items: center; justify-content: center; min-width: 24px; height: 24px; border-radius: 6px; font-size: 11px; font-weight: 700; padding: 0 6px; }
+  .rank-1 { background: var(--amber-soft); color: var(--amber); }
+  .rank-2 { background: #f1f3f5; color: var(--slate); }
+  .rank-3 { background: #fff0e6; color: #e8590c; }
+
+  /* Download panels */
+  .download-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 24px; }
+  .dl-panel { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 24px; }
+  .dl-panel-title { font-size: 15px; font-weight: 600; letter-spacing: -0.3px; margin-bottom: 4px; }
+  .dl-panel-desc { font-size: 12px; color: var(--text-secondary); margin-bottom: 16px; }
+  .dl-meta { display: flex; gap: 24px; margin-bottom: 16px; }
+  .dl-meta-label { font-size: 10px; font-weight: 600; color: var(--text-tertiary); }
+  .dl-meta-val { font-size: 13px; color: var(--text); margin-top: 2px; }
+  .dl-btn { display: inline-flex; align-items: center; gap: 6px; padding: 10px 20px; border-radius: 8px; font-size: 13px; font-weight: 600; border: none; cursor: pointer; transition: all 0.15s; }
+  .dl-btn.primary { background: var(--accent); color: #fff; }
+  .dl-btn.primary:hover { filter: brightness(1.1); }
+  .dl-btn:active { transform: translateY(1px); }
+  .status-dot { display: inline-block; width: 6px; height: 6px; border-radius: 50%; margin-right: 6px; }
+  .status-dot.ok { background: var(--green); }
+
+  /* Log */
+  .log-box { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 16px 20px; font-family: 'JetBrains Mono', 'Cascadia Code', monospace; font-size: 11px; line-height: 1.8; color: var(--text-secondary); max-height: 160px; overflow-y: auto; }
+  .log-time { color: var(--text-tertiary); }
+
+  /* Index page */
+  .index-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  .index-panel { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; overflow: hidden; }
+  .index-panel-header { padding: 16px 20px; font-size: 14px; font-weight: 600; letter-spacing: -0.3px; border-bottom: 1px solid var(--border); }
+  .index-panel-body { padding: 8px 0; }
+
+  /* Filter bar */
+  .filter-bar { display: flex; gap: 8px; align-items: center; margin-bottom: 16px; flex-wrap: wrap; }
+  .filter-input { padding: 8px 14px; border: 1px solid var(--border); border-radius: 8px; font-size: 13px; width: 200px; outline: none; background: var(--surface); }
+  .filter-input:focus { border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-soft); }
+  .filter-select { padding: 8px 14px; border: 1px solid var(--border); border-radius: 8px; font-size: 13px; background: var(--surface); outline: none; cursor: pointer; color: var(--text); }
+  .filter-count { margin-left: auto; font-size: 12px; color: var(--text-tertiary); }
+
+  /* Pagination */
+  .pagination { display: flex; justify-content: center; gap: 4px; margin-top: 16px; }
+  .page-btn { min-width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; border-radius: 6px; font-size: 12px; font-weight: 500; border: 1px solid var(--border); background: var(--surface); color: var(--text); cursor: pointer; transition: all 0.15s; padding: 0 8px; }
+  .page-btn.active { background: var(--accent); color: #fff; border-color: var(--accent); }
+  .page-btn:hover:not(.active) { background: var(--bg); }
+</style>
+
+<!-- ========== NAV ========== -->
+<div class="nav">
+  <span class="nav-brand">StockChose</span>
+  <div class="nav-links">
+    <a href="#" class="nav-link active">仪表盘</a>
+    <a href="#" class="nav-link">全部排名</a>
+    <a href="#" class="nav-link">下载管理</a>
+    <a href="#" class="nav-link">指数详情</a>
+  </div>
+</div>
+
+<div class="page">
+
+  <!-- ========== 仪表盘 ========== -->
+  <div class="section">
+    <div class="section-header">
+      <span class="section-title">仪表盘</span>
+      <span style="font-size:11px;color:var(--text-tertiary)">数据更新于 2026-05-22 09:30</span>
+    </div>
+    <div class="stats">
+      <div class="stat accent">
+        <div class="stat-label">A股总数</div>
+        <div class="stat-value">4,862</div>
+        <div class="stat-sub">数据源：东方财富</div>
+      </div>
+      <div class="stat green">
+        <div class="stat-label">有效标的</div>
+        <div class="stat-value">3,201</div>
+        <div class="stat-sub">已剔除 ST / 负值</div>
+      </div>
+      <div class="stat amber">
+        <div class="stat-label">收录指数</div>
+        <div class="stat-value">156</div>
+        <div class="stat-sub">巨潮指数成分股</div>
+      </div>
+      <div class="stat">
+        <div class="stat-label">评分模型</div>
+        <div class="stat-value" style="font-size:18px">PE + ROE + 指数</div>
+        <div class="stat-sub">三因子综合排名</div>
+      </div>
+    </div>
+
+    <div class="section-header">
+      <span class="section-title">综合排名 Top 20</span>
+      <a href="#" class="section-link">查看全部排名</a>
+    </div>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th style="width:48px">排名</th><th>代码</th><th>名称</th><th class="right">股价</th><th class="right">市盈率</th><th class="right">市净率</th><th class="right">ROE</th><th class="right">PE排名</th><th class="right">ROE排名</th><th class="right">指数覆盖</th><th class="right">综合得分</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><span class="rank-num rank-1">1</span></td><td style="font-weight:600">600519</td><td>贵州茅台</td><td class="right">1,856.00</td><td class="right">28.5</td><td class="right">8.2</td><td class="right">28.3%</td><td class="right">1,234</td><td class="right">56</td><td class="right">23</td><td class="right" style="font-weight:700;color:var(--accent)">1,313</td>
+          </tr>
+          <tr>
+            <td><span class="rank-num rank-2">2</span></td><td style="font-weight:600">000858</td><td>五粮液</td><td class="right">156.20</td><td class="right">22.1</td><td class="right">5.8</td><td class="right">24.1%</td><td class="right">856</td><td class="right">89</td><td class="right">18</td><td class="right" style="font-weight:700;color:var(--accent)">963</td>
+          </tr>
+          <tr>
+            <td><span class="rank-num rank-3">3</span></td><td style="font-weight:600">601318</td><td>中国平安</td><td class="right">42.80</td><td class="right">9.8</td><td class="right">1.1</td><td class="right">18.7%</td><td class="right">234</td><td class="right">1,023</td><td class="right">31</td><td class="right" style="font-weight:700;color:var(--accent)">1,288</td>
+          </tr>
+          <tr>
+            <td><span class="rank-num">4</span></td><td style="font-weight:600">600036</td><td>招商银行</td><td class="right">35.60</td><td class="right">6.2</td><td class="right">0.9</td><td class="right">15.8%</td><td class="right">98</td><td class="right">1,845</td><td class="right">28</td><td class="right" style="font-weight:700;color:var(--accent)">1,971</td>
+          </tr>
+          <tr>
+            <td><span class="rank-num">5</span></td><td style="font-weight:600">000333</td><td>美的集团</td><td class="right">58.30</td><td class="right">12.4</td><td class="right">3.1</td><td class="right">22.6%</td><td class="right">412</td><td class="right">134</td><td class="right">15</td><td class="right" style="font-weight:700;color:var(--accent)">561</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div style="height:48px"></div>
+
+  <!-- ========== 全部排名 ========== -->
+  <div class="section">
+    <div class="section-header">
+      <span class="section-title">全部排名</span>
+    </div>
+    <div class="filter-bar">
+      <input class="filter-input" placeholder="搜索代码或名称...">
+      <select class="filter-select">
+        <option>全部市场</option><option>沪市A股</option><option>深市A股</option><option>创业板</option><option>科创板</option>
+      </select>
+      <select class="filter-select">
+        <option>排序：综合得分</option><option>PE排名</option><option>ROE排名</option><option>指数覆盖</option>
+      </select>
+      <span class="filter-count">共 3,201 条</span>
+    </div>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr><th style="width:48px">排名</th><th>代码</th><th>名称</th><th>市场</th><th class="right">市盈率</th><th class="right">PE排名</th><th class="right">市净率</th><th class="right">ROE</th><th class="right">ROE排名</th><th class="right">指数覆盖</th><th class="right">综合得分</th></tr>
+        </thead>
+        <tbody>
+          <tr><td><span class="rank-num rank-1">1</span></td><td style="font-weight:600">600519</td><td>贵州茅台</td><td style="color:var(--text-secondary);font-size:12px">沪市A股</td><td class="right">28.5</td><td class="right">1,234</td><td class="right">8.2</td><td class="right">28.3%</td><td class="right">56</td><td class="right">23</td><td class="right" style="font-weight:700;color:var(--accent)">1,313</td></tr>
+          <tr style="background:#fafbfc"><td><span class="rank-num rank-2">2</span></td><td style="font-weight:600">000858</td><td>五粮液</td><td style="color:var(--text-secondary);font-size:12px">深市A股</td><td class="right">22.1</td><td class="right">856</td><td class="right">5.8</td><td class="right">24.1%</td><td class="right">89</td><td class="right">18</td><td class="right" style="font-weight:700;color:var(--accent)">963</td></tr>
+          <tr><td><span class="rank-num rank-3">3</span></td><td style="font-weight:600">601318</td><td>中国平安</td><td style="color:var(--text-secondary);font-size:12px">沪市A股</td><td class="right">9.8</td><td class="right">234</td><td class="right">1.1</td><td class="right">18.7%</td><td class="right">1,023</td><td class="right">31</td><td class="right" style="font-weight:700;color:var(--accent)">1,288</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="pagination">
+      <span class="page-btn active">1</span>
+      <span class="page-btn">2</span>
+      <span class="page-btn">3</span>
+      <span class="page-btn" style="color:var(--text-tertiary);border:none">...</span>
+      <span class="page-btn">161</span>
+    </div>
+  </div>
+
+  <div style="height:48px"></div>
+
+  <!-- ========== 下载管理 ========== -->
+  <div class="section">
+    <div class="section-header">
+      <span class="section-title">下载管理</span>
+    </div>
+    <div class="download-grid">
+      <div class="dl-panel">
+        <div class="dl-panel-title">股票数据</div>
+        <div class="dl-panel-desc">A股基本面数据，多数据源自动容错</div>
+        <div class="dl-meta">
+          <div class="dl-meta-item">
+            <div class="dl-meta-label">主数据源</div>
+            <div class="dl-meta-val"><span class="status-dot ok"></span>东方财富</div>
+          </div>
+          <div class="dl-meta-item">
+            <div class="dl-meta-label">备选数据源</div>
+            <div class="dl-meta-val">AKShare</div>
+          </div>
+          <div class="dl-meta-item">
+            <div class="dl-meta-label">上次成功</div>
+            <div class="dl-meta-val">2026-05-22 09:30</div>
+          </div>
+        </div>
+        <button class="dl-btn primary">立即下载</button>
+      </div>
+      <div class="dl-panel">
+        <div class="dl-panel-title">指数成分股</div>
+        <div class="dl-panel-desc">巨潮指数成分股列表，自动下载并解析</div>
+        <div class="dl-meta">
+          <div class="dl-meta-item">
+            <div class="dl-meta-label">状态</div>
+            <div class="dl-meta-val"><span class="status-dot ok"></span>正常</div>
+          </div>
+          <div class="dl-meta-item">
+            <div class="dl-meta-label">已下载指数</div>
+            <div class="dl-meta-val">156 个</div>
+          </div>
+          <div class="dl-meta-item">
+            <div class="dl-meta-label">成分股条目</div>
+            <div class="dl-meta-val">4,826 条</div>
+          </div>
+        </div>
+        <button class="dl-btn primary">刷新指数</button>
+      </div>
+    </div>
+    <div class="section-header" style="margin-top:8px">
+      <span style="font-size:14px;font-weight:600">下载日志</span>
+    </div>
+    <div class="log-box">
+      <span class="log-time">[2026-05-22 09:30:15]</span> 股票数据下载完成 | 数据源: 东方财富 | 原始 4,862 条 → 有效 3,201 条<br>
+      <span class="log-time">[2026-05-22 09:28:02]</span> 开始下载股票数据...<br>
+      <span class="log-time">[2026-05-21 15:00:33]</span> 指数数据刷新完成 | 156 个指数下载成功<br>
+      <span class="log-time">[2026-05-21 14:55:10]</span> 开始下载指数数据...
+    </div>
+  </div>
+
+  <div style="height:48px"></div>
+
+  <!-- ========== 指数详情 ========== -->
+  <div class="section">
+    <div class="section-header">
+      <span class="section-title">指数覆盖详情</span>
+    </div>
+    <div class="index-grid">
+      <div class="index-panel">
+        <div class="index-panel-header">个股指数覆盖排行</div>
+        <div class="index-panel-body">
+          <table>
+            <thead><tr><th>代码</th><th>名称</th><th class="right">收录指数数</th><th class="right">排名</th></tr></thead>
+            <tbody>
+              <tr><td style="font-weight:600">600519</td><td>贵州茅台</td><td class="right" style="font-weight:700;color:var(--accent)">23</td><td class="right">1</td></tr>
+              <tr><td style="font-weight:600">000858</td><td>五粮液</td><td class="right" style="font-weight:700;color:var(--accent)">18</td><td class="right">2</td></tr>
+              <tr><td style="font-weight:600">601318</td><td>中国平安</td><td class="right" style="font-weight:700;color:var(--accent)">31</td><td class="right">1</td></tr>
+              <tr><td style="font-weight:600">600036</td><td>招商银行</td><td class="right" style="font-weight:700;color:var(--accent)">28</td><td class="right">2</td></tr>
+              <tr><td style="font-weight:600">000333</td><td>美的集团</td><td class="right" style="font-weight:700;color:var(--accent)">15</td><td class="right">3</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <div class="index-panel">
+        <div class="index-panel-header">成分股数量最多的指数</div>
+        <div class="index-panel-body">
+          <table>
+            <thead><tr><th>指数代码</th><th>指数名称</th><th class="right">成分股数量</th></tr></thead>
+            <tbody>
+              <tr><td style="font-weight:600">000300</td><td>沪深300</td><td class="right">300</td></tr>
+              <tr><td style="font-weight:600">000905</td><td>中证500</td><td class="right">500</td></tr>
+              <tr><td style="font-weight:600">000852</td><td>中证1000</td><td class="right">1,000</td></tr>
+              <tr><td style="font-weight:600">000688</td><td>科创50</td><td class="right">50</td></tr>
+              <tr><td style="font-weight:600">000016</td><td>上证50</td><td class="right">50</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>

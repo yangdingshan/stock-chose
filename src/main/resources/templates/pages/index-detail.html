@@ -1,0 +1,107 @@
+<div th:fragment="content">
+    <div class="section-header">
+        <span class="section-title">指数覆盖详情</span>
+        <span style="font-size:11px;color:var(--text-tertiary)">已收录 <span th:text="${indexCount}">0</span> 个指数</span>
+    </div>
+
+    <div class="index-grid">
+        <div class="index-panel">
+            <div class="index-panel-header">个股指数覆盖排行</div>
+            <div class="index-panel-body">
+                <table class="table-custom">
+                    <thead>
+                        <tr>
+                            <th>代码</th>
+                            <th>名称</th>
+                            <th class="right">收录指数数</th>
+                            <th class="right">排名</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:each="stock,iterStat : ${topByCoverage}">
+                            <td style="font-weight:600" th:text="${stock.code}"></td>
+                            <td th:text="${stock.name}"></td>
+                            <td class="right score-highlight" th:text="${stock.indexCount}"></td>
+                            <td class="right" th:text="${iterStat.index + 1}"></td>
+                        </tr>
+                        <tr th:if="${topByCoverage == null || topByCoverage.isEmpty()}">
+                            <td colspan="4" style="text-align:center;padding:40px;color:var(--text-tertiary)">
+                                暂无指数数据，请先在下载管理页面刷新指数
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="index-panel">
+            <div class="index-panel-header">指数成分股查询</div>
+            <div class="index-panel-body">
+                <div style="margin-bottom:12px">
+                    <select id="index-select" style="width:100%;padding:8px 12px;border:1px solid var(--border);border-radius:6px;font-size:13px;background:var(--bg);color:var(--text);">
+                        <option value="">-- 选择指数 --</option>
+                        <option th:each="idx : ${indexList}" th:value="${idx.code}"
+                                th:text="${idx.name} + ' (' + idx.count + ' 只成分股)'"></option>
+                    </select>
+                </div>
+                <div id="index-result" style="max-height:400px;overflow-y:auto">
+                    <table class="table-custom">
+                        <thead>
+                            <tr>
+                                <th>代码</th>
+                                <th>名称</th>
+                                <th class="right">PE</th>
+                                <th class="right">ROE</th>
+                            </tr>
+                        </thead>
+                        <tbody id="index-result-body">
+                            <tr>
+                                <td colspan="4" style="text-align:center;padding:40px;color:var(--text-tertiary)">
+                                    请选择指数查看成分股
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+(function() {
+    var select = document.getElementById('index-select');
+    if (!select) return;
+    select.addEventListener('change', function() {
+        var code = this.value;
+        var tbody = document.getElementById('index-result-body');
+        if (!code) {
+            tbody.innerHTML = '<tr><td colspan="4" style="text-align:center;padding:40px;color:var(--text-tertiary)">请选择指数查看成分股</td></tr>';
+            return;
+        }
+        tbody.innerHTML = '<tr><td colspan="4" style="text-align:center;padding:20px;color:var(--text-tertiary)">加载中...</td></tr>';
+        fetch('/index/constituents?code=' + encodeURIComponent(code))
+            .then(function(r) { return r.json(); })
+            .then(function(data) {
+                var stocks = data.stocks || [];
+                if (stocks.length === 0) {
+                    tbody.innerHTML = '<tr><td colspan="4" style="text-align:center;padding:40px;color:var(--text-tertiary)">该指数暂无成分股数据</td></tr>';
+                    return;
+                }
+                var html = '';
+                stocks.forEach(function(s) {
+                    html += '<tr>' +
+                        '<td style="font-weight:600">' + (s.code || '') + '</td>' +
+                        '<td>' + (s.name || '') + '</td>' +
+                        '<td class="right">' + (s.pe != null ? s.pe.toFixed(2) : '-') + '</td>' +
+                        '<td class="right">' + (s.roe != null ? (s.roe * 100).toFixed(2) + '%' : '-') + '</td>' +
+                        '</tr>';
+                });
+                tbody.innerHTML = html;
+            })
+            .catch(function() {
+                tbody.innerHTML = '<tr><td colspan="4" style="text-align:center;padding:40px;color:#e64980">加载失败，请重试</td></tr>';
+            });
+    });
+})();
+</script>

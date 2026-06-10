@@ -1,0 +1,358 @@
+<div th:fragment="content">
+    <div class="section-header">
+        <span class="section-title">下载管理</span>
+    </div>
+
+    <div class="download-grid">
+        <div class="dl-panel">
+            <div class="dl-panel-title">股票数据</div>
+            <div class="dl-panel-desc">A股基本面数据，多数据源自动容错</div>
+            <div class="dl-meta">
+                <div>
+                    <div class="dl-meta-label">主数据源 (AKShare)</div>
+                    <div class="dl-meta-val">
+                        <span class="status-dot" th:classappend="${akshareAvailable} ? 'ok' : 'err'"></span>
+                        <span th:text="${akshareAvailable} ? '可用' : '不可用'">可用</span>
+                    </div>
+                </div>
+                <div>
+                    <div class="dl-meta-label">备用数据源 (东方财富)</div>
+                    <div class="dl-meta-val">
+                        <span class="status-dot" th:classappend="${eastmoneyAvailable} ? 'ok' : 'err'"></span>
+                        <span th:text="${eastmoneyAvailable} ? '可用' : '不可用'">不可用</span>
+                    </div>
+                </div>
+                <div>
+                    <div class="dl-meta-label">本地缓存</div>
+                    <div class="dl-meta-val">
+                        <span class="status-dot" th:classappend="${cacheAvailable} ? 'ok' : 'err'"></span>
+                        <span th:text="${cacheAvailable} ? '可用' : '不可用'">可用</span>
+                    </div>
+                </div>
+                <div>
+                    <div class="dl-meta-label">上次下载</div>
+                    <div class="dl-meta-val" th:text="${lastDownloadTime} ?: '从未下载'">-</div>
+                </div>
+            </div>
+            <div th:if="${lastDownloadSource}" style="margin-bottom:16px;font-size:12px;color:var(--text-secondary)">
+                数据来源: <span th:text="${lastDownloadSource}"></span> · 库存: <span th:text="${stockCount}"></span> 条
+            </div>
+            <button class="btn-dl" id="btn-dl-stocks">立即下载</button>
+            <span id="stock-dl-status" style="margin-left:12px;font-size:12px;color:var(--text-secondary)"></span>
+        </div>
+
+        <div class="dl-panel">
+            <div class="dl-panel-title">指数成分股</div>
+            <div class="dl-panel-desc">巨潮指数成分股列表，自动下载并解析</div>
+            <div class="dl-meta">
+                <div>
+                    <div class="dl-meta-label">已下载指数</div>
+                    <div class="dl-meta-val" th:text="${indexCount} + ' 个'">0 个</div>
+                </div>
+                <div>
+                    <div class="dl-meta-label">上次刷新</div>
+                    <div class="dl-meta-val" th:text="${lastIndexRefreshTime} ?: '从未刷新'">-</div>
+                </div>
+            </div>
+            <button class="btn-dl" id="btn-dl-indices">刷新指数</button>
+            <span id="index-dl-status" style="margin-left:12px;font-size:12px;color:var(--text-secondary)"></span>
+        </div>
+
+        <div class="dl-panel">
+            <div class="dl-panel-title">搜索并下载指数</div>
+            <div class="dl-panel-desc">按关键词搜索指数（如"消费"、"医药"、"新能源"），选择需要的指数下载</div>
+            <div style="display:flex;gap:8px;margin:12px 0">
+                <input type="text" id="index-search-input" placeholder="输入关键词搜索指数..."
+                       style="flex:1;padding:8px 12px;border:1px solid var(--border);border-radius:6px;font-size:13px;background:var(--bg);color:var(--text)">
+                <button class="btn-dl" id="btn-index-search" style="white-space:nowrap">搜索</button>
+            </div>
+            <div id="index-search-results" style="max-height:250px;overflow-y:auto;margin-bottom:12px;display:none">
+                <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+                    <span style="font-size:12px;color:var(--text-secondary)" id="search-result-count"></span>
+                    <span>
+                        <a href="#" id="select-all-link" style="font-size:12px;margin-right:8px">全选</a>
+                        <a href="#" id="deselect-all-link" style="font-size:12px">取消全选</a>
+                    </span>
+                </div>
+                <div id="index-checkbox-list"></div>
+            </div>
+            <button class="btn-dl" id="btn-dl-selected" style="display:none">下载选中指数</button>
+            <span id="select-dl-status" style="margin-left:12px;font-size:12px;color:var(--text-secondary)"></span>
+        </div>
+    </div>
+
+    <div class="section-header" style="margin-top:8px">
+        <span style="font-size:14px;font-weight:600">下载日志</span>
+    </div>
+    <div class="log-box" id="download-log">
+        <span style="color:var(--text-tertiary)">系统就绪，点击按钮开始下载...</span>
+    </div>
+</div>
+
+<script>
+(function() {
+    var logBox = document.getElementById('download-log');
+
+    function log(msg) {
+        if (!logBox) return;
+        var now = new Date().toLocaleString();
+        logBox.innerHTML = '<span style="color:var(--text-tertiary)">[' + now + ']</span> ' + msg + '<br>' + logBox.innerHTML;
+    }
+
+    function doDownloadStocks() {
+        var btn = document.getElementById('btn-dl-stocks');
+        var status = document.getElementById('stock-dl-status');
+        if (!btn || !status) return;
+        btn.disabled = true;
+        btn.style.opacity = '0.6';
+        status.textContent = '下载中...';
+        status.style.color = '';
+        log('开始下载股票数据...');
+
+        fetch('/download/stocks', { method: 'POST' })
+            .then(function(r) { return r.json(); })
+            .then(function(data) {
+                btn.disabled = false;
+                btn.style.opacity = '1';
+                if (data.success) {
+                    status.textContent = '完成: ' + data.source + ' / ' + data.count + ' 条';
+                    log('股票数据下载完成 | 数据源: ' + data.source + ' | 共 ' + data.count + ' 条');
+                    setTimeout(function() { location.reload(); }, 1500);
+                } else {
+                    status.textContent = '失败: ' + (data.error || '未知错误');
+                    status.style.color = '#e64980';
+                    log('下载失败: ' + (data.error || '未知错误'));
+                }
+            })
+            .catch(function(e) {
+                btn.disabled = false;
+                btn.style.opacity = '1';
+                status.textContent = '请求失败: ' + e.message;
+                status.style.color = '#e64980';
+                log('请求异常: ' + e.message);
+            });
+    }
+
+    function doRefreshIndices() {
+        var btn = document.getElementById('btn-dl-indices');
+        var status = document.getElementById('index-dl-status');
+        if (!btn || !status) return;
+        btn.disabled = true;
+        btn.style.opacity = '0.6';
+        status.textContent = '启动中...';
+        status.style.color = '';
+        log('开始下载指数数据...');
+
+        fetch('/download/indices', { method: 'POST' })
+            .then(function(r) { return r.json(); })
+            .then(function(data) {
+                if (data.success) {
+                    status.textContent = '后台下载中，预计3-5分钟...';
+                    log('指数刷新任务已启动，等待完成...');
+                    pollIndexStatus(btn, status, 0);
+                } else {
+                    btn.disabled = false;
+                    btn.style.opacity = '1';
+                    status.textContent = '失败: ' + (data.error || '未知错误');
+                    status.style.color = '#e64980';
+                    log('指数刷新失败: ' + (data.error || '未知错误'));
+                }
+            })
+            .catch(function(e) {
+                btn.disabled = false;
+                btn.style.opacity = '1';
+                status.textContent = '请求失败: ' + e.message;
+                status.style.color = '#e64980';
+                log('请求异常: ' + e.message);
+            });
+    }
+
+    function pollIndexStatus(btn, status, count) {
+        var maxPolls = 300; // 10 minutes max
+        if (count >= maxPolls) {
+            btn.disabled = false;
+            btn.style.opacity = '1';
+            status.textContent = '超时，请稍后刷新页面查看';
+            status.style.color = '#e64980';
+            log('指数刷新超时，请手动刷新页面查看结果');
+            return;
+        }
+        setTimeout(function() {
+            fetch('/download/indices/status')
+                .then(function(r) { return r.json(); })
+                .then(function(data) {
+                    if (data.running) {
+                        var msg = '下载中: ' + data.progressCurrent + '/' + data.progressTotal;
+                        if (data.progressName) {
+                            msg += ' [' + data.progressName + ']';
+                            if (data.progressStatus === 'ok') {
+                                msg += ' ' + data.progressStocks + '只';
+                            } else {
+                                msg += ' 失败';
+                            }
+                        }
+                        status.textContent = msg;
+                        pollIndexStatus(btn, status, count + 1);
+                    } else {
+                        btn.disabled = false;
+                        btn.style.opacity = '1';
+                        status.textContent = '完成: ' + data.indexCount + ' 个指数';
+                        log('指数数据刷新完成 | ' + data.indexCount + ' 个指数下载成功');
+                        setTimeout(function() { location.reload(); }, 1500);
+                    }
+                })
+                .catch(function() {
+                    pollIndexStatus(btn, status, count + 1);
+                });
+        }, 2000);
+    }
+
+    // ---- Index search & selective download ----
+    var searchResults = [];
+    var selectAllLink = document.getElementById('select-all-link');
+    var deselectAllLink = document.getElementById('deselect-all-link');
+
+    function doSearchIndex() {
+        var input = document.getElementById('index-search-input');
+        var resultsDiv = document.getElementById('index-search-results');
+        var countSpan = document.getElementById('search-result-count');
+        var listDiv = document.getElementById('index-checkbox-list');
+        var dlBtn = document.getElementById('btn-dl-selected');
+        var keyword = input ? input.value.trim() : '';
+
+        if (!keyword) return;
+        log('搜索指数: ' + keyword);
+        listDiv.innerHTML = '<span style="color:var(--text-tertiary);font-size:12px">搜索中...</span>';
+        resultsDiv.style.display = 'block';
+        dlBtn.style.display = 'none';
+
+        fetch('/download/indices/search?keyword=' + encodeURIComponent(keyword))
+            .then(function(r) { return r.json(); })
+            .then(function(data) {
+                searchResults = data || [];
+                countSpan.textContent = '找到 ' + searchResults.length + ' 个指数';
+                if (searchResults.length === 0) {
+                    listDiv.innerHTML = '<span style="color:var(--text-tertiary);font-size:12px">未找到匹配的指数</span>';
+                    return;
+                }
+                var html = '';
+                searchResults.forEach(function(idx, i) {
+                    html += '<label style="display:flex;align-items:center;gap:8px;padding:4px 0;font-size:13px;cursor:pointer">' +
+                        '<input type="checkbox" class="idx-cb" value="' + idx.code + '" data-name="' + idx.name + '">' +
+                        '<span style="font-weight:600;min-width:70px">' + idx.code + '</span>' +
+                        '<span>' + idx.name + '</span>' +
+                        '</label>';
+                });
+                listDiv.innerHTML = html;
+                dlBtn.style.display = 'inline-block';
+            })
+            .catch(function(e) {
+                listDiv.innerHTML = '<span style="color:#e64980;font-size:12px">搜索失败: ' + e.message + '</span>';
+            });
+    }
+
+    function setAllCheckboxes(checked) {
+        var cbs = document.querySelectorAll('.idx-cb');
+        cbs.forEach(function(cb) { cb.checked = checked; });
+    }
+
+    function doDownloadSelected() {
+        var cbs = document.querySelectorAll('.idx-cb:checked');
+        var btn = document.getElementById('btn-dl-selected');
+        var status = document.getElementById('select-dl-status');
+        var codes = [];
+        cbs.forEach(function(cb) {
+            codes.push(cb.value + ':' + (cb.getAttribute('data-name') || cb.value));
+        });
+
+        if (codes.length === 0) {
+            status.textContent = '请先选择指数';
+            return;
+        }
+
+        btn.disabled = true;
+        btn.style.opacity = '0.6';
+        status.textContent = '启动中...';
+        status.style.color = '';
+        log('开始下载 ' + codes.length + ' 个选中指数...');
+
+        fetch('/download/indices/select', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ codes: codes })
+        })
+            .then(function(r) { return r.json(); })
+            .then(function(data) {
+                if (data.success) {
+                    status.textContent = '后台下载中，预计1-3分钟...';
+                    pollSelectStatus(btn, status, 0);
+                } else {
+                    btn.disabled = false;
+                    btn.style.opacity = '1';
+                    status.textContent = '失败: ' + (data.error || '未知错误');
+                    status.style.color = '#e64980';
+                }
+            })
+            .catch(function(e) {
+                btn.disabled = false;
+                btn.style.opacity = '1';
+                status.textContent = '请求失败: ' + e.message;
+                status.style.color = '#e64980';
+            });
+    }
+
+    function pollSelectStatus(btn, status, count) {
+        var maxPolls = 300;
+        if (count >= maxPolls) {
+            btn.disabled = false;
+            btn.style.opacity = '1';
+            status.textContent = '超时，请稍后刷新页面查看';
+            status.style.color = '#e64980';
+            return;
+        }
+        setTimeout(function() {
+            fetch('/download/indices/status')
+                .then(function(r) { return r.json(); })
+                .then(function(data) {
+                    if (data.running) {
+                        var msg = '下载中: ' + data.progressCurrent + '/' + data.progressTotal;
+                        if (data.progressName) {
+                            msg += ' [' + data.progressName + ']';
+                            if (data.progressStatus === 'ok') {
+                                msg += ' ' + data.progressStocks + '只';
+                            } else {
+                                msg += ' 失败';
+                            }
+                        }
+                        status.textContent = msg;
+                        pollSelectStatus(btn, status, count + 1);
+                    } else {
+                        btn.disabled = false;
+                        btn.style.opacity = '1';
+                        status.textContent = '完成: ' + data.indexCount + ' 个指数';
+                        log('选中指数下载完成 | 共 ' + data.indexCount + ' 个指数');
+                        setTimeout(function() { location.reload(); }, 1500);
+                    }
+                })
+                .catch(function() {
+                    pollSelectStatus(btn, status, count + 1);
+                });
+        }, 2000);
+    }
+
+    // Bind event listeners after DOM is ready
+    var btnStocks = document.getElementById('btn-dl-stocks');
+    var btnIndices = document.getElementById('btn-dl-indices');
+    var btnSearch = document.getElementById('btn-index-search');
+    var btnDlSelected = document.getElementById('btn-dl-selected');
+    var searchInput = document.getElementById('index-search-input');
+
+    if (btnStocks) btnStocks.addEventListener('click', doDownloadStocks);
+    if (btnIndices) btnIndices.addEventListener('click', doRefreshIndices);
+    if (btnSearch) btnSearch.addEventListener('click', doSearchIndex);
+    if (btnDlSelected) btnDlSelected.addEventListener('click', doDownloadSelected);
+    if (searchInput) searchInput.addEventListener('keydown', function(e) { if (e.key === 'Enter') doSearchIndex(); });
+    if (selectAllLink) selectAllLink.addEventListener('click', function(e) { e.preventDefault(); setAllCheckboxes(true); });
+    if (deselectAllLink) deselectAllLink.addEventListener('click', function(e) { e.preventDefault(); setAllCheckboxes(false); });
+})();
+</script>
